@@ -1,0 +1,39 @@
+{
+  "id": "K-000003",
+  "title": "JSON-based Storage Architecture",
+  "type": "decision",
+  "status": "active",
+  "confidence": "high",
+  "content": {
+    "summary": "Knowledge is stored as individual JSON files in a `.knowledge/atoms` directory.",
+    "details": "The system uses a flat file storage for atoms and a central `index.json` for fast lookup. `storage/atoms.go` handles file operations. `storage/index.go` handles indexing. This design is local-first and git-friendly.",
+    "pitfalls": [
+      "Manually editing index.json can cause desync. Use `rebuild_index` tool if this happens."
+    ],
+    "update_notes": [
+      {
+        "date": "2026-01-21",
+        "note": "Initial creation"
+      }
+    ]
+  },
+  "created_at": "2026-01-21",
+  "updated_at": "2026-01-21",
+  "tags": [
+    "storage",
+    "architecture",
+    "json"
+  ],
+  "sources": [
+    {
+      "kind": "repo_path",
+      "ref": "storage/atoms.go"
+    },
+    {
+      "kind": "repo_path",
+      "ref": "storage/index.go"
+    }
+  ],
+  "links": [],
+  "supersedes": []
+}

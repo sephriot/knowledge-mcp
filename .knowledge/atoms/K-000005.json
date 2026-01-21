@@ -1,0 +1,36 @@
+{
+  "id": "K-000005",
+  "title": "Integrating with AI Assistants",
+  "type": "procedure",
+  "status": "active",
+  "confidence": "high",
+  "content": {
+    "summary": "How to configure Claude or Gemini to use this MCP server.",
+    "details": "Add the server configuration to `claude_desktop_config.json`, `.gemini/settings.json`, or the project's `.mcp.json`. Refer to the README for specific JSON structures and arguments.",
+    "pitfalls": [
+      "Paths to the binary must be absolute or in the system PATH."
+    ],
+    "update_notes": [
+      {
+        "date": "2026-01-21",
+        "note": "Initial creation"
+      }
+    ]
+  },
+  "created_at": "2026-01-21",
+  "updated_at": "2026-01-21",
+  "tags": [
+    "integration",
+    "claude",
+    "gemini",
+    "configuration"
+  ],
+  "sources": [
+    {
+      "kind": "repo_path",
+      "ref": "README.md"
+    }
+  ],
+  "links": [],
+  "supersedes": []
+}

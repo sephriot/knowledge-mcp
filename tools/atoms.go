@@ -3,6 +3,7 @@ package tools
 import (
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/sephriot/knowledge-mcp/config"
@@ -18,13 +19,13 @@ type AtomTools struct {
 }
 
 // NewAtomTools creates a new atom tools instance.
-func NewAtomTools(cfg *config.Config) *AtomTools {
+func NewAtomTools(cfg *config.Config, indexManager *storage.IndexManager) *AtomTools {
 	if cfg == nil {
 		cfg = config.GetConfig()
 	}
 	return &AtomTools{
 		config:       cfg,
-		indexManager: storage.NewIndexManager(cfg),
+		indexManager: indexManager,
 		atomStorage:  storage.NewAtomStorage(cfg),
 	}
 }
@@ -82,11 +83,11 @@ func (t *AtomTools) ListAtoms(types []string, tags []string, status, language *s
 		if len(tags) > 0 {
 			entryTagsLower := make(map[string]bool)
 			for _, t := range entry.Tags {
-				entryTagsLower[t] = true
+				entryTagsLower[strings.ToLower(t)] = true
 			}
 			found := false
 			for _, tag := range tags {
-				if entryTagsLower[tag] {
+				if entryTagsLower[strings.ToLower(tag)] {
 					found = true
 					break
 				}

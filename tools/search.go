@@ -29,13 +29,13 @@ var confidencePriority = map[models.Confidence]int{
 }
 
 // NewSearchEngine creates a new search engine.
-func NewSearchEngine(cfg *config.Config) *SearchEngine {
+func NewSearchEngine(cfg *config.Config, indexManager *storage.IndexManager) *SearchEngine {
 	if cfg == nil {
 		cfg = config.GetConfig()
 	}
 	return &SearchEngine{
 		config:       cfg,
-		indexManager: storage.NewIndexManager(cfg),
+		indexManager: indexManager,
 		atomStorage:  storage.NewAtomStorage(cfg),
 	}
 }

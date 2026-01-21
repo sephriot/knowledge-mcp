@@ -12,6 +12,7 @@ import (
 
 	"github.com/sephriot/knowledge-mcp/config"
 	"github.com/sephriot/knowledge-mcp/models"
+	"github.com/sephriot/knowledge-mcp/storage"
 	"github.com/sephriot/knowledge-mcp/tools"
 )
 
@@ -31,10 +32,11 @@ func main() {
 		server.WithToolCapabilities(true),
 	)
 
-	// Initialize tools
-	searchEngine := tools.NewSearchEngine(cfg)
-	upsertHandler := tools.NewUpsertHandler(cfg)
-	atomTools := tools.NewAtomTools(cfg)
+	// Initialize shared index manager and tools
+	indexManager := storage.NewIndexManager(cfg)
+	searchEngine := tools.NewSearchEngine(cfg, indexManager)
+	upsertHandler := tools.NewUpsertHandler(cfg, indexManager)
+	atomTools := tools.NewAtomTools(cfg, indexManager)
 
 	// Register tools
 	registerSearchTool(s, searchEngine)

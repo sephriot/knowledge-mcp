@@ -235,8 +235,8 @@ func (idx *Index) GetNextID() string {
 	maxNum := 0
 	for _, entry := range idx.Atoms {
 		var num int
-		_, _ = fmt.Sscanf(entry.ID, "K-%d", &num)
-		if num > maxNum {
+		n, _ := fmt.Sscanf(entry.ID, "K-%d", &num)
+		if n == 1 && num > maxNum {
 			maxNum = num
 		}
 	}

@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/sephriot/knowledge-mcp/config"
@@ -16,13 +17,13 @@ type UpsertHandler struct {
 }
 
 // NewUpsertHandler creates a new upsert handler.
-func NewUpsertHandler(cfg *config.Config) *UpsertHandler {
+func NewUpsertHandler(cfg *config.Config, indexManager *storage.IndexManager) *UpsertHandler {
 	if cfg == nil {
 		cfg = config.GetConfig()
 	}
 	return &UpsertHandler{
 		config:       cfg,
-		indexManager: storage.NewIndexManager(cfg),
+		indexManager: indexManager,
 		atomStorage:  storage.NewAtomStorage(cfg),
 	}
 }
@@ -45,6 +46,17 @@ type UpsertInput struct {
 
 // Upsert creates or updates a knowledge atom.
 func (h *UpsertHandler) Upsert(input UpsertInput) (map[string]any, error) {
+	// Validate enum fields
+	if !input.Type.IsValid() {
+		return nil, fmt.Errorf("invalid atom type: %s", input.Type)
+	}
+	if !input.Status.IsValid() {
+		return nil, fmt.Errorf("invalid atom status: %s", input.Status)
+	}
+	if !input.Confidence.IsValid() {
+		return nil, fmt.Errorf("invalid confidence level: %s", input.Confidence)
+	}
+
 	today := time.Now().Format("2006-01-02")
 
 	// Handle existing atom update
@@ -136,22 +148,22 @@ func (h *UpsertHandler) updateAtom(existing *models.Atom, input UpsertInput, tod
 		Note: "Updated",
 	})
 
-	// Ensure slices are not nil
+	// Preserve existing values if input is nil
 	pitfalls := input.Pitfalls
 	if pitfalls == nil {
 		pitfalls = existing.Content.Pitfalls
 	}
 	tags := input.Tags
 	if tags == nil {
-		tags = []string{}
+		tags = existing.Tags
 	}
 	sources := input.Sources
 	if sources == nil {
-		sources = []models.Source{}
+		sources = existing.Sources
 	}
 	links := input.Links
 	if links == nil {
-		links = []models.Link{}
+		links = existing.Links
 	}
 
 	// Build content

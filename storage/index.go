@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/sephriot/knowledge-mcp/config"
 	"github.com/sephriot/knowledge-mcp/models"
@@ -14,6 +15,7 @@ import (
 type IndexManager struct {
 	config *config.Config
 	index  *models.Index
+	mu     sync.RWMutex
 }
 
 // NewIndexManager creates a new index manager.
@@ -24,10 +26,10 @@ func NewIndexManager(cfg *config.Config) *IndexManager {
 	return &IndexManager{config: cfg}
 }
 
-// Load loads the index from disk.
-func (m *IndexManager) Load() (*models.Index, error) {
+// loadLocked loads the index from disk. Caller must hold the lock.
+func (m *IndexManager) loadLocked() error {
 	if m.index != nil {
-		return m.index, nil
+		return nil
 	}
 
 	indexPath := m.config.IndexPath()
@@ -36,22 +38,22 @@ func (m *IndexManager) Load() (*models.Index, error) {
 	if err != nil {
 		if os.IsNotExist(err) {
 			m.index = models.NewEmptyIndex()
-			return m.index, nil
+			return nil
 		}
-		return nil, fmt.Errorf("failed to read index file: %w", err)
+		return fmt.Errorf("failed to read index file: %w", err)
 	}
 
 	var index models.Index
 	if err := json.Unmarshal(data, &index); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal index: %w", err)
+		return fmt.Errorf("failed to unmarshal index: %w", err)
 	}
 
 	m.index = &index
-	return m.index, nil
+	return nil
 }
 
-// Save saves the index to disk.
-func (m *IndexManager) Save() error {
+// saveLocked saves the index to disk. Caller must hold the lock.
+func (m *IndexManager) saveLocked() error {
 	if m.index == nil {
 		return nil
 	}
@@ -74,33 +76,59 @@ func (m *IndexManager) Save() error {
 	return nil
 }
 
+// Load loads the index from disk.
+func (m *IndexManager) Load() (*models.Index, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if err := m.loadLocked(); err != nil {
+		return nil, err
+	}
+	return m.index, nil
+}
+
+// Save saves the index to disk.
+func (m *IndexManager) Save() error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	return m.saveLocked()
+}
+
 // GetIndex gets the current index, loading if necessary.
 func (m *IndexManager) GetIndex() (*models.Index, error) {
-	if m.index == nil {
-		return m.Load()
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if err := m.loadLocked(); err != nil {
+		return nil, err
 	}
 	return m.index, nil
 }
 
 // AddOrUpdate adds or updates an entry in the index.
 func (m *IndexManager) AddOrUpdate(entry *models.IndexEntry) error {
-	index, err := m.GetIndex()
-	if err != nil {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if err := m.loadLocked(); err != nil {
 		return err
 	}
-	index.AddOrUpdate(entry)
-	return m.Save()
+	m.index.AddOrUpdate(entry)
+	return m.saveLocked()
 }
 
 // Remove removes an entry from the index.
 func (m *IndexManager) Remove(atomID string) (bool, error) {
-	index, err := m.GetIndex()
-	if err != nil {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if err := m.loadLocked(); err != nil {
 		return false, err
 	}
-	result := index.Remove(atomID)
+	result := m.index.Remove(atomID)
 	if result {
-		if err := m.Save(); err != nil {
+		if err := m.saveLocked(); err != nil {
 			return false, err
 		}
 	}
@@ -109,28 +137,35 @@ func (m *IndexManager) Remove(atomID string) (bool, error) {
 
 // FindByID finds an entry by ID.
 func (m *IndexManager) FindByID(atomID string) (*models.IndexEntry, error) {
-	index, err := m.GetIndex()
-	if err != nil {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if err := m.loadLocked(); err != nil {
 		return nil, err
 	}
-	return index.FindByID(atomID), nil
+	return m.index.FindByID(atomID), nil
 }
 
 // GetNextID gets the next available atom ID.
 func (m *IndexManager) GetNextID() (string, error) {
-	index, err := m.GetIndex()
-	if err != nil {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if err := m.loadLocked(); err != nil {
 		return "", err
 	}
-	return index.GetNextID(), nil
+	return m.index.GetNextID(), nil
 }
 
 // RebuildFromAtoms rebuilds the index from atom files.
 func (m *IndexManager) RebuildFromAtoms(atomsPath string) (*models.Index, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	m.index = models.NewEmptyIndex()
 
 	if _, err := os.Stat(atomsPath); os.IsNotExist(err) {
-		if err := m.Save(); err != nil {
+		if err := m.saveLocked(); err != nil {
 			return nil, err
 		}
 		return m.index, nil
@@ -143,6 +178,7 @@ func (m *IndexManager) RebuildFromAtoms(atomsPath string) (*models.Index, error)
 		return nil, fmt.Errorf("failed to read atoms directory: %w", err)
 	}
 
+	var loadErrors []string
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
@@ -155,6 +191,7 @@ func (m *IndexManager) RebuildFromAtoms(atomsPath string) (*models.Index, error)
 		atomID := strings.TrimSuffix(name, ".json")
 		atom, err := storage.Load(atomID)
 		if err != nil {
+			loadErrors = append(loadErrors, fmt.Sprintf("%s: %v", atomID, err))
 			continue
 		}
 		if atom != nil {
@@ -163,7 +200,15 @@ func (m *IndexManager) RebuildFromAtoms(atomsPath string) (*models.Index, error)
 		}
 	}
 
-	if err := m.Save(); err != nil {
+	// Log any errors to stderr (MCP uses stdout for communication)
+	if len(loadErrors) > 0 {
+		fmt.Fprintf(os.Stderr, "Warning: failed to load %d atoms during rebuild:\n", len(loadErrors))
+		for _, e := range loadErrors {
+			fmt.Fprintf(os.Stderr, "  - %s\n", e)
+		}
+	}
+
+	if err := m.saveLocked(); err != nil {
 		return nil, err
 	}
 
@@ -172,6 +217,9 @@ func (m *IndexManager) RebuildFromAtoms(atomsPath string) (*models.Index, error)
 
 // InvalidateCache invalidates the cached index.
 func (m *IndexManager) InvalidateCache() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	m.index = nil
 }
 
