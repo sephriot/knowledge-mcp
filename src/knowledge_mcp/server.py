@@ -59,8 +59,8 @@ def _get_atom_tools() -> AtomTools:
 @mcp.tool
 def search(
     query: str,
-    types: list[str] | None = None,
-    tags: list[str] | None = None,
+    types: list[str] = [],
+    tags: list[str] = [],
     language: str | None = None,
     status: str | None = None,
     limit: int = 10,
@@ -84,8 +84,8 @@ def search(
     search_method = engine.search_content if include_content else engine.search
     return search_method(
         query=query,
-        types=types,
-        tags=tags,
+        types=types or None,
+        tags=tags or None,
         language=language,
         status=status,
         limit=limit,
@@ -101,9 +101,9 @@ def upsert(
     content: dict,
     id: str | None = None,
     language: str | None = None,
-    tags: list[str] | None = None,
-    sources: list[dict] | None = None,
-    links: list[dict] | None = None,
+    tags: list[str] = [],
+    sources: list[dict] = [],
+    links: list[dict] = [],
 ) -> dict:
     """Create or update a knowledge atom.
 
@@ -130,9 +130,9 @@ def upsert(
         content=content,
         id=id,
         language=language,
-        tags=tags,
-        sources=sources,
-        links=links,
+        tags=tags or None,
+        sources=sources or None,
+        links=links or None,
     )
 
 
@@ -143,8 +143,8 @@ def upsert(
 
 @mcp.tool
 def list_atoms(
-    types: list[str] | None = None,
-    tags: list[str] | None = None,
+    types: list[str] = [],
+    tags: list[str] = [],
     status: str | None = None,
     language: str | None = None,
     limit: int = 50,
@@ -162,8 +162,8 @@ def list_atoms(
         List of atom summaries.
     """
     return _get_atom_tools().list_atoms(
-        types=types,
-        tags=tags,
+        types=types or None,
+        tags=tags or None,
         status=status,
         language=language,
         limit=limit,
