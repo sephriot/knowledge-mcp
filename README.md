@@ -7,11 +7,14 @@ An MCP server providing project-specific knowledge management for coding agents 
 ## Installation
 
 ```bash
-# Using pip
-pip install -e .
+# Using uv (recommended)
+uv tool install git+https://github.com/sephriot/knowledge-mcp
+
+# Or for local development
+uv pip install -e .
 
 # With development dependencies
-pip install -e ".[dev]"
+uv pip install -e ".[dev]"
 ```
 
 ## Usage
@@ -19,7 +22,10 @@ pip install -e ".[dev]"
 ### Running the Server
 
 ```bash
-# Default (uses .knowledge/ in current directory)
+# Using uvx (no installation required)
+uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp
+
+# If installed via uv tool install
 knowledge-mcp
 
 # Custom path
@@ -34,11 +40,11 @@ KNOWLEDGE_MCP_PATH=./my-knowledge knowledge-mcp
 #### Option 1: Using the CLI (Recommended)
 
 ```bash
-# Add as a global MCP server
-claude mcp add knowledge-mcp -- knowledge-mcp
+# Add as a global MCP server using uvx
+claude mcp add knowledge-mcp -- uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp
 
 # Or with a custom data path
-claude mcp add knowledge-mcp -- knowledge-mcp --data-path /path/to/.knowledge
+claude mcp add knowledge-mcp -- uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp --data-path /path/to/.knowledge
 ```
 
 #### Option 2: Project-level configuration
@@ -48,9 +54,9 @@ Create or edit `.mcp.json` in your project root:
 ```json
 {
   "mcpServers": {
-    "knowledge": {
-      "command": "knowledge-mcp",
-      "args": ["--data-path", ".knowledge"]
+    "knowledge-mcp": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/sephriot/knowledge-mcp", "knowledge-mcp", "--data-path", ".knowledge"]
     }
   }
 }
@@ -63,9 +69,9 @@ Edit `~/.claude/settings.json`:
 ```json
 {
   "mcpServers": {
-    "knowledge": {
-      "command": "knowledge-mcp",
-      "args": []
+    "knowledge-mcp": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/sephriot/knowledge-mcp", "knowledge-mcp"]
     }
   }
 }
@@ -79,7 +85,7 @@ After adding, verify the server is available:
 claude mcp list
 ```
 
-You should see `knowledge` in the list of available MCP servers.
+You should see `knowledge-mcp` in the list of available MCP servers.
 
 ## Storage Structure
 
@@ -196,13 +202,13 @@ Use `include_content: true` to search within atom content (summary and details),
 ### Running Tests
 
 ```bash
-pytest tests/
+uv run pytest tests/
 ```
 
 ### Testing with MCP Inspector
 
 ```bash
-npx @modelcontextprotocol/inspector knowledge-mcp
+npx @modelcontextprotocol/inspector -- uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp
 ```
 
 ## Atom Fields Reference
