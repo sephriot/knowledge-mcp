@@ -16,7 +16,8 @@ class Config:
         """
         if data_path is None:
             data_path = os.environ.get("KNOWLEDGE_MCP_PATH", ".knowledge")
-        self._data_path = Path(data_path)
+        # Resolve relative paths to absolute paths based on current working directory
+        self._data_path = Path(data_path).resolve()
 
     @property
     def data_path(self) -> Path:
