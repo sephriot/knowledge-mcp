@@ -1,0 +1,43 @@
+{
+  "id": "K-000009",
+  "title": "Config Package - Path Resolution",
+  "type": "pattern",
+  "status": "active",
+  "confidence": "high",
+  "content": {
+    "summary": "The config package handles data path resolution with fallback logic and provides path helpers for storage locations.",
+    "details": "## Path Resolution Priority\n\n1. `--data-path` CLI flag (if provided)\n2. `KNOWLEDGE_MCP_PATH` environment variable\n3. Default: `.knowledge` in current working directory\n\nRelative paths are automatically resolved to absolute paths using the current working directory.\n\n## Key Functions\n\n| Function | Description |\n|----------|-------------|\n| `New(dataPath)` | Create config with path resolution |\n| `IndexPath()` | Returns `{DataPath}/index.json` |\n| `AtomsPath()` | Returns `{DataPath}/atoms` |\n| `EnsureDirs()` | Creates storage directories if missing |\n| `GetConfig()` | Returns global config singleton |\n| `SetConfig(cfg)` | Sets global config singleton |\n\n## Usage Pattern\n\n```go\n// In main.go\ncfg := config.New(*dataPath)  // From CLI flag\nconfig.SetConfig(cfg)         // Set as global\n\n// In other packages\ncfg := config.GetConfig()\nindexPath := cfg.IndexPath()\n```",
+    "pitfalls": [
+      "Relative paths are resolved at startup time - changing working directory later won't affect stored paths.",
+      "GetConfig() creates a default config if none was set, which may not be desired."
+    ],
+    "update_notes": [
+      {
+        "date": "2026-01-21",
+        "note": "Initial creation"
+      }
+    ]
+  },
+  "language": "go",
+  "created_at": "2026-01-21",
+  "updated_at": "2026-01-21",
+  "tags": [
+    "config",
+    "path-resolution",
+    "storage",
+    "singleton"
+  ],
+  "sources": [
+    {
+      "kind": "repo_path",
+      "ref": "config/config.go"
+    }
+  ],
+  "links": [
+    {
+      "rel": "see_also",
+      "id": "K-000003"
+    }
+  ],
+  "supersedes": []
+}

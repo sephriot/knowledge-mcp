@@ -1,0 +1,39 @@
+{
+  "id": "K-000008",
+  "title": "MCP-Go Library Dependency",
+  "type": "fact",
+  "status": "active",
+  "confidence": "high",
+  "content": {
+    "summary": "The project uses github.com/mark3labs/mcp-go for MCP protocol implementation.",
+    "details": "## Dependency\n\n```go\nrequire github.com/mark3labs/mcp-go v0.27.0\n```\n\n## Usage in main.go\n\nThe library provides:\n- `mcp.NewTool()` - Define MCP tools with parameters\n- `mcp.WithDescription()`, `mcp.WithString()`, `mcp.WithArray()`, etc. - Tool configuration\n- `server.NewMCPServer()` - Create MCP server instance\n- `server.ServeStdio()` - Start stdio transport\n\n## Key Patterns\n\n```go\ns := server.NewMCPServer(\n    \"knowledge-mcp\",\n    \"0.1.0\",\n    server.WithResourceCapabilities(true, true),\n    server.WithToolCapabilities(true),\n)\n\ns.AddTool(mcp.NewTool(\"tool_name\",\n    mcp.WithDescription(\"...\"),\n    mcp.WithString(\"param\", mcp.Required()),\n), handlerFunc)\n\nserver.ServeStdio(s)\n```",
+    "pitfalls": [],
+    "update_notes": [
+      {
+        "date": "2026-01-21",
+        "note": "Initial creation"
+      }
+    ]
+  },
+  "language": "go",
+  "created_at": "2026-01-21",
+  "updated_at": "2026-01-21",
+  "tags": [
+    "mcp",
+    "dependency",
+    "library",
+    "mcp-go"
+  ],
+  "sources": [
+    {
+      "kind": "repo_path",
+      "ref": "go.mod"
+    },
+    {
+      "kind": "repo_path",
+      "ref": "main.go"
+    }
+  ],
+  "links": [],
+  "supersedes": []
+}

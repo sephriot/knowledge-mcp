@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-01-21T09:56:26Z",
+  "updated_at": "2026-01-21T10:00:19Z",
   "atoms": [
     {
       "id": "K-000001",
@@ -68,7 +68,8 @@
         "integration",
         "claude",
         "gemini",
-        "configuration"
+        "configuration",
+        "mcp"
       ],
       "path": "atoms/K-000005.json",
       "updated_at": "2026-01-21"
@@ -103,6 +104,54 @@
         "validation"
       ],
       "path": "atoms/K-000007.json",
+      "updated_at": "2026-01-21"
+    },
+    {
+      "id": "K-000008",
+      "title": "MCP-Go Library Dependency",
+      "type": "fact",
+      "status": "active",
+      "confidence": "high",
+      "language": "go",
+      "tags": [
+        "mcp",
+        "dependency",
+        "library",
+        "mcp-go"
+      ],
+      "path": "atoms/K-000008.json",
+      "updated_at": "2026-01-21"
+    },
+    {
+      "id": "K-000009",
+      "title": "Config Package - Path Resolution",
+      "type": "pattern",
+      "status": "active",
+      "confidence": "high",
+      "language": "go",
+      "tags": [
+        "config",
+        "path-resolution",
+        "storage",
+        "singleton"
+      ],
+      "path": "atoms/K-000009.json",
+      "updated_at": "2026-01-21"
+    },
+    {
+      "id": "K-000010",
+      "title": "Destructive and Utility Tools",
+      "type": "fact",
+      "status": "active",
+      "confidence": "high",
+      "tags": [
+        "tools",
+        "purge",
+        "delete",
+        "utility",
+        "index"
+      ],
+      "path": "atoms/K-000010.json",
       "updated_at": "2026-01-21"
     }
   ]

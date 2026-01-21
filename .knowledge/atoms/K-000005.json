@@ -5,15 +5,20 @@
   "status": "active",
   "confidence": "high",
   "content": {
-    "summary": "How to configure Claude or Gemini to use this MCP server.",
-    "details": "Add the server configuration to `claude_desktop_config.json`, `.gemini/settings.json`, or the project's `.mcp.json`. Refer to the README for specific JSON structures and arguments.",
+    "summary": "How to configure Claude Code, Gemini, or other AI assistants to use this MCP server.",
+    "details": "## Claude Code\n\n### Option 1: CLI (Recommended)\n```bash\nclaude mcp add knowledge-mcp -- knowledge-mcp\n```\n\n### Option 2: Project-level (.mcp.json)\n```json\n{\n  \"mcpServers\": {\n    \"knowledge-mcp\": {\n      \"command\": \"/path/to/knowledge-mcp\",\n      \"args\": [\"--data-path\", \".knowledge\"]\n    }\n  }\n}\n```\n\n### Option 3: Global (~/.claude/settings.json)\n```json\n{\n  \"mcpServers\": {\n    \"knowledge-mcp\": {\n      \"command\": \"/path/to/knowledge-mcp\",\n      \"args\": []\n    }\n  }\n}\n```\n\n## Gemini\n\nEdit `~/.gemini/settings.json`:\n```json\n{\n  \"mcpServers\": {\n    \"knowledge-mcp\": {\n      \"command\": \"/path/to/knowledge-mcp\",\n      \"args\": [\"--data-path\", \"/path/to/.knowledge\"]\n    }\n  }\n}\n```\n\n## System Prompt Integration\n\nAppend contents of `SYSTEM_PROMPT.md` to your assistant's config file (`~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md`, etc.) to ensure automatic knowledge retrieval and updates.",
     "pitfalls": [
-      "Paths to the binary must be absolute or in the system PATH."
+      "Paths to the binary must be absolute or in the system PATH.",
+      "For project-level config, use relative paths like '.knowledge' for portability."
     ],
     "update_notes": [
       {
         "date": "2026-01-21",
         "note": "Initial creation"
+      },
+      {
+        "date": "2026-01-21",
+        "note": "Updated"
       }
     ]
   },
@@ -23,7 +28,8 @@
     "integration",
     "claude",
     "gemini",
-    "configuration"
+    "configuration",
+    "mcp"
   ],
   "sources": [
     {
