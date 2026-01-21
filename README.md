@@ -228,6 +228,29 @@ npx @modelcontextprotocol/inspector -- uvx --from git+https://github.com/sephrio
 | `supersedes`   | No       | IDs of atoms this replaces                                                  |
 | `superseded_by`| No       | ID of atom that replaced this                                               |
 
+## AI Assistant Integration
+
+To ensure your AI assistant (Claude, Gemini, Codex, etc.) automatically uses knowledge-mcp, add the system prompt to your assistant's configuration file.
+
+### For Gemini
+
+Append the contents of [`SYSTEM_PROMPT.md`](./SYSTEM_PROMPT.md) to `~/.gemini/GEMINI.md`.
+
+### For Claude Code
+
+Append the contents of [`SYSTEM_PROMPT.md`](./SYSTEM_PROMPT.md) to `~/.claude/CLAUDE.md` or your project's `CLAUDE.md`.
+
+### For other assistants
+
+Copy the contents of [`SYSTEM_PROMPT.md`](./SYSTEM_PROMPT.md) to your assistant's system prompt or configuration file.
+
+This ensures the assistant will:
+
+1. Search existing knowledge before starting tasks
+2. Apply relevant knowledge to decisions
+3. Create new atoms when discovering reusable knowledge
+4. Cite knowledge usage in responses
+
 ## License
 
 MIT
