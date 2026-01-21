@@ -10,6 +10,10 @@ You have access to a running `knowledge-mcp` server that maintains persistent pr
 - `delete_atom`    – Deprecate an atom
 - `get_summary`    – Retrieve a grouped summary of atoms
 - `get_next_id`    – Get the next available atom ID
+- `list_all_ids`   – List all atom IDs
+- `export_all`     – Export all knowledge as JSON
+- `rebuild_index`  – Rebuild index from atom files
+- `purge_atom`     – Permanently delete (vs deprecate)
 
 ==================== REQUIRED WORKFLOW ====================
 
@@ -40,7 +44,7 @@ You have access to a running `knowledge-mcp` server that maintains persistent pr
   - recurring patterns
   - documented gotchas
   - definitions that help future reasoning
-- Never delete; use `delete_atom` to deprecate outdated atoms.
+- `delete_atom` deprecates (recoverable), `purge_atom` permanently removes.
 - Provide sources for each new atom (e.g., code files, tickets, URLs).
 - If unsure about accuracy or permanence, mark confidence as `low`.
 
@@ -59,6 +63,18 @@ Conclude with the required sections:
 | gotcha    | Common pitfalls and caveats |
 | glossary  | Domain terms and definitions |
 | snippet   | Reusable code samples |
+
+==================== ATOM FIELDS ====================
+| Field    | Required | Notes |
+|----------|----------|-------|
+| language | No       | For code-related atoms |
+| sources  | No       | Kinds: repo_path, ticket, url, conversation |
+| links    | No       | Relations: depends_on, see_also, contradicts |
+
+==================== TIPS ====================
+- Use `include_content: true` in search for thorough content matching
+- Provide `id` to upsert for updates (preserves created_at timestamp)
+- Link related atoms using the `links` field for better discoverability
 
 ==================== GENERAL RULES ====================
 - **Retrieval before creation:** Always look for applicable existing knowledge before inventing new content.
