@@ -6,33 +6,37 @@ An MCP server providing project-specific knowledge management for coding agents 
 
 ## Installation
 
+### Building from Source
+
 ```bash
-# Using uv (recommended)
-uv tool install git+https://github.com/sephriot/knowledge-mcp
+# Clone the repository
+git clone https://github.com/sephriot/knowledge-mcp
+cd knowledge-mcp
 
-# Or for local development
-uv pip install -e .
+# Build the binary
+go build -o knowledge-mcp .
 
-# With development dependencies
-uv pip install -e ".[dev]"
+# Optionally, install to your GOPATH
+go install .
 ```
+
+### Pre-built Binaries
+
+Download the latest release from the [releases page](https://github.com/sephriot/knowledge-mcp/releases).
 
 ## Usage
 
 ### Running the Server
 
 ```bash
-# Using uvx (no installation required)
-uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp
+# Default: uses .knowledge in current directory
+./knowledge-mcp
 
-# If installed via uv tool install
-knowledge-mcp
-
-# Custom path
-knowledge-mcp --data-path /path/to/knowledge
+# Custom data path
+./knowledge-mcp --data-path /path/to/knowledge
 
 # Or via environment variable
-KNOWLEDGE_MCP_PATH=./my-knowledge knowledge-mcp
+KNOWLEDGE_MCP_PATH=./my-knowledge ./knowledge-mcp
 ```
 
 ### Adding to Claude Code
@@ -40,11 +44,11 @@ KNOWLEDGE_MCP_PATH=./my-knowledge knowledge-mcp
 #### Option 1: Using the CLI (Recommended)
 
 ```bash
-# Add as a global MCP server using uvx
-claude mcp add knowledge-mcp -- uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp
+# Add as a global MCP server (assuming binary is in PATH)
+claude mcp add knowledge-mcp -- knowledge-mcp
 
 # Or with a custom data path
-claude mcp add knowledge-mcp -- uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp --data-path /path/to/.knowledge
+claude mcp add knowledge-mcp -- knowledge-mcp --data-path /path/to/.knowledge
 ```
 
 #### Option 2: Project-level configuration
@@ -55,8 +59,8 @@ Create or edit `.mcp.json` in your project root:
 {
   "mcpServers": {
     "knowledge-mcp": {
-      "command": "uvx",
-      "args": ["--from", "git+https://github.com/sephriot/knowledge-mcp", "knowledge-mcp", "--data-path", ".knowledge"]
+      "command": "/path/to/knowledge-mcp",
+      "args": ["--data-path", ".knowledge"]
     }
   }
 }
@@ -70,14 +74,29 @@ Edit `~/.claude/settings.json`:
 {
   "mcpServers": {
     "knowledge-mcp": {
-      "command": "uvx",
-      "args": ["--from", "git+https://github.com/sephriot/knowledge-mcp", "knowledge-mcp"]
+      "command": "/path/to/knowledge-mcp",
+      "args": []
     }
   }
 }
 ```
 
-#### Verify Installation
+### Adding to Gemini
+
+Edit `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "knowledge-mcp": {
+      "command": "/path/to/knowledge-mcp",
+      "args": ["--data-path", "/path/to/.knowledge"]
+    }
+  }
+}
+```
+
+### Verify Installation
 
 After adding, verify the server is available:
 
@@ -157,11 +176,9 @@ You should see `knowledge-mcp` in the list of available MCP servers.
     "confidence": "high",
     "language": "typescript",
     "tags": ["error-handling", "async"],
-    "content": {
-      "summary": "Centralized async error handling using Result types.",
-      "details": "Always wrap async operations in try-catch with specific error types...",
-      "pitfalls": ["Don't catch generic errors without re-throwing"]
-    },
+    "summary": "Centralized async error handling using Result types.",
+    "details": "Always wrap async operations in try-catch with specific error types...",
+    "pitfalls": ["Don't catch generic errors without re-throwing"],
     "sources": [
       {"kind": "repo_path", "ref": "src/utils/errors.ts"}
     ]
@@ -197,20 +214,6 @@ Use `include_content: true` to search within atom content (summary and details),
 }
 ```
 
-## Development
-
-### Running Tests
-
-```bash
-uv run pytest tests/
-```
-
-### Testing with MCP Inspector
-
-```bash
-npx @modelcontextprotocol/inspector -- uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp
-```
-
 ## Atom Fields Reference
 
 | Field          | Required | Description                                                                 |
@@ -220,13 +223,13 @@ npx @modelcontextprotocol/inspector -- uvx --from git+https://github.com/sephrio
 | `type`         | Yes      | fact, decision, procedure, pattern, gotcha, glossary, snippet               |
 | `status`       | Yes      | active, draft, deprecated                                                   |
 | `confidence`   | Yes      | high, medium, low                                                           |
-| `content`      | Yes      | Object with summary, details, pitfalls (optional), update_notes (optional)  |
+| `summary`      | Yes      | Main content summary                                                        |
+| `details`      | No       | Detailed explanation or code                                                |
+| `pitfalls`     | No       | List of potential pitfalls                                                  |
 | `language`     | No       | Programming language                                                        |
 | `tags`         | No       | Keywords for search                                                         |
 | `sources`      | No       | References (repo_path, ticket, url, conversation)                           |
 | `links`        | No       | Relations (depends_on, see_also, contradicts)                               |
-| `supersedes`   | No       | IDs of atoms this replaces                                                  |
-| `superseded_by`| No       | ID of atom that replaced this                                               |
 
 ## AI Assistant Integration
 

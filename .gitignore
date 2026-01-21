@@ -1,63 +1,19 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
+# Go build artifacts
+knowledge-mcp
+*.exe
+*.exe~
+*.dll
 *.so
+*.dylib
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# Test binary
+*.test
 
-# PyInstaller
-*.manifest
-*.spec
+# Output of go coverage tool
+*.out
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-
-# Translations
-*.mo
-*.pot
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+# Dependency directories
+vendor/
 
 # IDE
 .idea/
@@ -70,6 +26,8 @@ venv.bak/
 .DS_Store
 Thumbs.db
 
-# Knowledge storage (local development)
-.knowledge/
-.gemini
+# Environment files
+.env
+
+# Gemini config (user-specific)
+.gemini/
