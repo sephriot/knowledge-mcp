@@ -6,6 +6,14 @@ from pathlib import Path
 from fastmcp import FastMCP
 
 from .config import Config, set_config, get_config
+from .models.atom import (
+    AtomContentInput,
+    AtomStatus,
+    AtomType,
+    Confidence,
+    Link,
+    Source,
+)
 from .tools.atoms import AtomTools
 from .tools.search import SearchEngine
 from .tools.upsert import UpsertHandler
@@ -95,23 +103,23 @@ def search(
 @mcp.tool
 def upsert(
     title: str,
-    type: str,
-    status: str,
-    confidence: str,
-    content: dict,
+    type: AtomType,
+    status: AtomStatus,
+    confidence: Confidence,
+    content: AtomContentInput,
     id: str | None = None,
     language: str | None = None,
     tags: list[str] = [],
-    sources: list[dict] = [],
-    links: list[dict] = [],
+    sources: list[Source] = [],
+    links: list[Link] = [],
 ) -> dict:
     """Create or update a knowledge atom.
 
     Args:
         title: Short descriptive title.
-        type: Atom type (fact, decision, procedure, pattern, gotcha, glossary, snippet).
+        type: Atom type.
         status: Status (active, draft, deprecated).
-        confidence: Confidence level (high, medium, low).
+        confidence: Confidence level.
         content: Content with summary (required), details, pitfalls, update_notes.
         id: Optional ID for updates. Auto-generated for new atoms.
         language: Programming language (optional).

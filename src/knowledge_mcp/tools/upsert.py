@@ -6,6 +6,7 @@ from ..config import Config, get_config
 from ..models.atom import (
     Atom,
     AtomContent,
+    AtomContentInput,
     AtomStatus,
     AtomType,
     Confidence,
@@ -34,24 +35,24 @@ class UpsertHandler:
     def upsert(
         self,
         title: str,
-        type: str,
-        status: str,
-        confidence: str,
-        content: dict,
+        type: AtomType | str,
+        status: AtomStatus | str,
+        confidence: Confidence | str,
+        content: AtomContentInput | dict,
         id: str | None = None,
         language: str | None = None,
         tags: list[str] | None = None,
-        sources: list[dict] | None = None,
-        links: list[dict] | None = None,
+        sources: list[Source] | list[dict] | None = None,
+        links: list[Link] | list[dict] | None = None,
     ) -> dict:
         """Create or update a knowledge atom.
 
         Args:
             title: Short descriptive title.
-            type: Atom type (fact, decision, procedure, pattern, gotcha, glossary, snippet).
-            status: Status (active, draft, deprecated).
-            confidence: Confidence level (high, medium, low).
-            content: Content object with summary, details, pitfalls, update_notes.
+            type: Atom type.
+            status: Status.
+            confidence: Confidence level.
+            content: Content input object.
             id: Optional ID for updates. If not provided, creates a new atom.
             language: Optional programming language.
             tags: Optional list of tags.
@@ -63,6 +64,35 @@ class UpsertHandler:
         """
         today = date.today().isoformat()
 
+        # Normalize inputs (handle Pydantic models or dicts/strings)
+        # This ensures backward compatibility if called internally with dicts
+        atom_type = AtomType(type) if isinstance(type, str) else type
+        atom_status = AtomStatus(status) if isinstance(status, str) else status
+        atom_confidence = Confidence(confidence) if isinstance(confidence, str) else confidence
+        
+        # Parse content if it's a dict (internal use)
+        if isinstance(content, dict):
+            # Map dict to AtomContentInput logic manually or just use as is
+            # For simplicity, we'll convert strictly in the logic below
+            pass
+        
+        # Parse sources/links if they are dicts
+        parsed_sources = []
+        if sources:
+            for s in sources:
+                if isinstance(s, dict):
+                    parsed_sources.append(Source(**s))
+                else:
+                    parsed_sources.append(s)
+                    
+        parsed_links = []
+        if links:
+            for l in links:
+                if isinstance(l, dict):
+                    parsed_links.append(Link(**l))
+                else:
+                    parsed_links.append(l)
+
         # Handle existing atom update
         if id:
             existing = self._atom_storage.load(id)
@@ -70,14 +100,14 @@ class UpsertHandler:
                 return self._update_atom(
                     existing,
                     title=title,
-                    type=type,
-                    status=status,
-                    confidence=confidence,
+                    type=atom_type,
+                    status=atom_status,
+                    confidence=atom_confidence,
                     content=content,
                     language=language,
                     tags=tags,
-                    sources=sources,
-                    links=links,
+                    sources=parsed_sources,
+                    links=parsed_links,
                 )
 
         # Create new atom
@@ -85,14 +115,24 @@ class UpsertHandler:
             id = self._index_manager.get_next_id()
 
         # Build content object
+        # Handle both AtomContentInput object and dict (legacy/internal)
+        summary = content.summary if isinstance(content, AtomContentInput) else content.get("summary", "")
+        details = (content.details if isinstance(content, AtomContentInput) else content.get("details")) or ""
+        pitfalls = (content.pitfalls if isinstance(content, AtomContentInput) else content.get("pitfalls")) or []
+        
+        input_notes = (content.update_notes if isinstance(content, AtomContentInput) else content.get("update_notes")) or []
+        update_notes = []
+        for note in input_notes:
+            if isinstance(note, UpdateNote):
+                update_notes.append(note)
+            elif isinstance(note, dict):
+                update_notes.append(UpdateNote(**note))
+
         atom_content = AtomContent(
-            summary=content.get("summary", ""),
-            details=content.get("details", ""),
-            pitfalls=content.get("pitfalls", []),
-            update_notes=[
-                UpdateNote(**note) if isinstance(note, dict) else note
-                for note in content.get("update_notes", [])
-            ],
+            summary=summary,
+            details=details,
+            pitfalls=pitfalls,
+            update_notes=update_notes,
         )
 
         # Add initial update note if none provided
@@ -105,16 +145,16 @@ class UpsertHandler:
         atom = Atom(
             id=id,
             title=title,
-            type=AtomType(type),
-            status=AtomStatus(status),
-            confidence=Confidence(confidence),
+            type=atom_type,
+            status=atom_status,
+            confidence=atom_confidence,
             content=atom_content,
             language=language,
             created_at=today,
             updated_at=today,
             tags=tags or [],
-            sources=[Source(**s) for s in (sources or [])],
-            links=[Link(**ln) for ln in (links or [])],
+            sources=parsed_sources,
+            links=parsed_links,
         )
 
         # Save atom and update index
@@ -128,53 +168,58 @@ class UpsertHandler:
         self,
         existing: Atom,
         title: str,
-        type: str,
-        status: str,
-        confidence: str,
-        content: dict,
+        type: AtomType,
+        status: AtomStatus,
+        confidence: Confidence,
+        content: AtomContentInput | dict,
         language: str | None = None,
         tags: list[str] | None = None,
-        sources: list[dict] | None = None,
-        links: list[dict] | None = None,
+        sources: list[Source] | None = None,
+        links: list[Link] | None = None,
     ) -> dict:
-        """Update an existing atom.
-
-        Args:
-            existing: The existing atom to update.
-            title: New title.
-            type: New type.
-            status: New status.
-            confidence: New confidence.
-            content: New content.
-            language: New language.
-            tags: New tags.
-            sources: New sources.
-            links: New links.
-
-        Returns:
-            The updated atom as a dictionary.
-        """
+        """Update an existing atom."""
         today = date.today().isoformat()
 
         # Build content object
-        update_notes = [
-            UpdateNote(**note) if isinstance(note, dict) else note
-            for note in content.get("update_notes", [])
-        ]
+        input_notes = (content.update_notes if isinstance(content, AtomContentInput) else content.get("update_notes")) or []
+        update_notes = []
+        for note in input_notes:
+            if isinstance(note, UpdateNote):
+                update_notes.append(note)
+            elif isinstance(note, dict):
+                update_notes.append(UpdateNote(**note))
 
         # Preserve existing update notes and add new one
         existing_notes = [n.model_dump() for n in existing.content.update_notes]
         new_note = UpdateNote(date=today, note="Updated")
         all_notes = existing_notes + [new_note.model_dump()]
 
-        # Merge update notes from input if any
+        # Merge update notes from input if any (replace behavior if provided?)
+        # Original logic: if update_notes provided, use them. Else append "Updated".
+        # But wait, original logic:
+        # if update_notes: all_notes = [n.model_dump() for n in update_notes]
         if update_notes:
-            all_notes = [n.model_dump() for n in update_notes]
+             all_notes = [n.model_dump() for n in update_notes]
+        else:
+             # Use existing + new note
+             # (already set above)
+             pass
+
+        # Handle content fields merge
+        if isinstance(content, AtomContentInput):
+            summary = content.summary  # Required in input, so always present
+            # For details/pitfalls, we use existing if input is None (partial update)
+            details = content.details if content.details is not None else existing.content.details
+            pitfalls = content.pitfalls if content.pitfalls is not None else existing.content.pitfalls
+        else:
+            summary = content.get("summary", existing.content.summary)
+            details = content.get("details", existing.content.details)
+            pitfalls = content.get("pitfalls", existing.content.pitfalls)
 
         atom_content = AtomContent(
-            summary=content.get("summary", existing.content.summary),
-            details=content.get("details", existing.content.details),
-            pitfalls=content.get("pitfalls", existing.content.pitfalls),
+            summary=summary,
+            details=details,
+            pitfalls=pitfalls,
             update_notes=[UpdateNote(**n) for n in all_notes],
         )
 
@@ -182,16 +227,16 @@ class UpsertHandler:
         atom = Atom(
             id=existing.id,
             title=title,
-            type=AtomType(type),
-            status=AtomStatus(status),
-            confidence=Confidence(confidence),
+            type=type,
+            status=status,
+            confidence=confidence,
             content=atom_content,
             language=language,
             created_at=existing.created_at,
             updated_at=today,
             tags=tags or [],
-            sources=[Source(**s) for s in (sources or [])],
-            links=[Link(**ln) for ln in (links or [])],
+            sources=sources or [],
+            links=links or [],
             supersedes=existing.supersedes,
             superseded_by=existing.superseded_by,
         )

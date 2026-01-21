@@ -73,6 +73,17 @@ class AtomContent(BaseModel):
     model_config = {"extra": "forbid"}
 
 
+class AtomContentInput(BaseModel):
+    """Input content for upsert operations."""
+
+    summary: str
+    details: str | None = None
+    pitfalls: list[str] | None = None
+    update_notes: list[UpdateNote] | None = None
+
+    model_config = {"extra": "forbid"}
+
+
 class Atom(BaseModel):
     """A knowledge atom - the fundamental unit of knowledge storage."""
 

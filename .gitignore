@@ -72,3 +72,4 @@ Thumbs.db
 
 # Knowledge storage (local development)
 .knowledge/
+.gemini
