@@ -55,7 +55,7 @@ type SearchResult struct {
 }
 
 // Search searches for knowledge atoms.
-func (e *SearchEngine) Search(query string, types []string, tags []string, language, status *string, limit int) ([]SearchResult, error) {
+func (e *SearchEngine) Search(query []string, types []string, tags []string, language, status *string, limit int) ([]SearchResult, error) {
 	index, err := e.indexManager.GetIndex()
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (e *SearchEngine) Search(query string, types []string, tags []string, langu
 	}
 
 	var results []scoredEntry
-	queryLower := strings.ToLower(query)
+	queryTokens := normalizeTokens(query)
 
 	// Convert types to set for fast lookup
 	typeSet := make(map[models.AtomType]bool)
@@ -104,7 +104,7 @@ func (e *SearchEngine) Search(query string, types []string, tags []string, langu
 		}
 
 		// Calculate relevance score
-		score := e.calculateScore(entry, queryLower)
+		score := e.calculateScore(entry, queryTokens)
 		if score > 0 {
 			results = append(results, scoredEntry{entry: entry, score: score})
 		}
@@ -133,32 +133,46 @@ func (e *SearchEngine) Search(query string, types []string, tags []string, langu
 	return formatted, nil
 }
 
+// normalizeTokens converts query tokens to lowercase for case-insensitive matching.
+func normalizeTokens(tokens []string) []string {
+	result := make([]string, 0, len(tokens))
+	for _, t := range tokens {
+		if t != "" {
+			result = append(result, strings.ToLower(t))
+		}
+	}
+	return result
+}
+
 // calculateScore calculates relevance score for an entry.
-func (e *SearchEngine) calculateScore(entry *models.IndexEntry, queryLower string) int {
+func (e *SearchEngine) calculateScore(entry *models.IndexEntry, queryTokens []string) int {
 	// Empty query returns all atoms with base score
-	if queryLower == "" {
+	if len(queryTokens) == 0 {
 		baseScore := 10
 		baseScore += statusPriority[entry.Status] * 5
 		baseScore += confidencePriority[entry.Confidence] * 3
 		return baseScore
 	}
 
-	// Non-empty query: must match in title or tags
 	matchScore := 0
-
-	// Title match (highest weight)
 	titleLower := strings.ToLower(entry.Title)
-	if strings.Contains(titleLower, queryLower) {
-		matchScore += 100
-		if strings.HasPrefix(titleLower, queryLower) {
-			matchScore += 50
-		}
-	}
 
-	// Tag match
-	for _, tag := range entry.Tags {
-		if strings.Contains(strings.ToLower(tag), queryLower) {
-			matchScore += 30
+	// Check each token - OR logic with cumulative scoring
+	for _, token := range queryTokens {
+		// Title match (highest weight per token)
+		if strings.Contains(titleLower, token) {
+			matchScore += 100
+			if strings.HasPrefix(titleLower, token) {
+				matchScore += 50
+			}
+		}
+
+		// Tag match (per token)
+		for _, tag := range entry.Tags {
+			if strings.Contains(strings.ToLower(tag), token) {
+				matchScore += 30
+				break // Only count once per token
+			}
 		}
 	}
 
@@ -198,7 +212,7 @@ func (e *SearchEngine) formatResult(entry *models.IndexEntry, score int) SearchR
 }
 
 // SearchContent performs deep search including atom content.
-func (e *SearchEngine) SearchContent(query string, types []string, tags []string, language, status *string, limit int) ([]SearchResult, error) {
+func (e *SearchEngine) SearchContent(query []string, types []string, tags []string, language, status *string, limit int) ([]SearchResult, error) {
 	index, err := e.indexManager.GetIndex()
 	if err != nil {
 		return nil, err
@@ -210,7 +224,7 @@ func (e *SearchEngine) SearchContent(query string, types []string, tags []string
 	}
 
 	var results []scoredEntry
-	queryLower := strings.ToLower(query)
+	queryTokens := normalizeTokens(query)
 
 	// Convert types to set for fast lookup
 	typeSet := make(map[models.AtomType]bool)
@@ -247,7 +261,7 @@ func (e *SearchEngine) SearchContent(query string, types []string, tags []string
 		}
 
 		// Calculate relevance score (including content)
-		score := e.calculateContentScore(entry, queryLower)
+		score := e.calculateContentScore(entry, queryTokens)
 		if score > 0 {
 			results = append(results, scoredEntry{entry: entry, score: score})
 		}
@@ -277,9 +291,9 @@ func (e *SearchEngine) SearchContent(query string, types []string, tags []string
 }
 
 // calculateContentScore calculates relevance score including content search.
-func (e *SearchEngine) calculateContentScore(entry *models.IndexEntry, queryLower string) int {
+func (e *SearchEngine) calculateContentScore(entry *models.IndexEntry, queryTokens []string) int {
 	// Empty query returns all atoms with base score
-	if queryLower == "" {
+	if len(queryTokens) == 0 {
 		baseScore := 10
 		baseScore += statusPriority[entry.Status] * 5
 		baseScore += confidencePriority[entry.Confidence] * 3
@@ -287,20 +301,22 @@ func (e *SearchEngine) calculateContentScore(entry *models.IndexEntry, queryLowe
 	}
 
 	// Start with basic score from title/tag matching
-	score := e.calculateScore(entry, queryLower)
+	score := e.calculateScore(entry, queryTokens)
 
 	// Also search in content
 	atom, err := e.atomStorage.Load(entry.ID)
 	if err == nil && atom != nil {
 		contentText := strings.ToLower(atom.Content.Summary + " " + atom.Content.Details)
-		if strings.Contains(contentText, queryLower) {
-			// If no title/tag match, give a base content match score
-			if score == 0 {
-				score = 20
-				score += statusPriority[entry.Status] * 5
-				score += confidencePriority[entry.Confidence] * 3
-			} else {
-				score += 20
+		for _, token := range queryTokens {
+			if strings.Contains(contentText, token) {
+				// If no title/tag match, give a base content match score
+				if score == 0 {
+					score = 20
+					score += statusPriority[entry.Status] * 5
+					score += confidencePriority[entry.Confidence] * 3
+				} else {
+					score += 20
+				}
 			}
 		}
 	}

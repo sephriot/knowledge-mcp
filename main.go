@@ -63,7 +63,7 @@ func registerSearchTool(s *server.MCPServer, engine *tools.SearchEngine) {
 		mcp.WithDescription(`Search knowledge atoms by title, tags, and content.
 
 Args:
-    query: Search query string.
+    query: Search query tokens. Results match if ANY token is found (OR logic). More matches = higher score.
     types: Filter by types (fact, decision, procedure, pattern, gotcha, glossary, snippet).
     tags: Filter by tags.
     language: Filter by programming language.
@@ -73,7 +73,7 @@ Args:
 
 Returns:
     List of matching atoms with metadata and summary.`),
-		mcp.WithString("query", mcp.Required(), mcp.Description("Search query string")),
+		mcp.WithArray("query", mcp.Description("Search query tokens. Results match if ANY token is found (OR logic). More matches = higher score.")),
 		mcp.WithArray("types", mcp.Description("Filter by types")),
 		mcp.WithArray("tags", mcp.Description("Filter by tags")),
 		mcp.WithString("language", mcp.Description("Filter by programming language")),
@@ -82,7 +82,7 @@ Returns:
 		mcp.WithBoolean("include_content", mcp.Description("Search in atom content too")),
 	), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 
-		query, _ := request.Params.Arguments["query"].(string)
+		query := getStringArray(request.Params.Arguments, "query")
 
 		var types []string
 		if t, ok := request.Params.Arguments["types"].([]any); ok {
