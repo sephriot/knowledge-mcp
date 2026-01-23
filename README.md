@@ -1,10 +1,34 @@
 # Knowledge MCP Server
 
-An MCP server providing project-specific knowledge management for coding agents (Claude Code, Codex, Gemini). Uses **stdio transport** and **JSON-based storage** for optimal LLM efficiency.
+An MCP server providing project-specific knowledge management for coding agents (Claude Code, Codex, Gemini). Uses **stdio transport** and **YAML-based storage** for optimal LLM efficiency.
 
 **Local-first design**: Each project has its own `.knowledge` directory that can be committed to git.
 
 ## Installation
+
+### Using pip
+
+```bash
+pip install knowledge-mcp
+```
+
+### Using uv
+
+```bash
+uv pip install knowledge-mcp
+```
+
+### Using uvx (no installation)
+
+Run directly without installing:
+
+```bash
+# From PyPI
+uvx knowledge-mcp --data-path .knowledge
+
+# From GitHub
+uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp --data-path .knowledge
+```
 
 ### Building from Source
 
@@ -13,16 +37,12 @@ An MCP server providing project-specific knowledge management for coding agents 
 git clone https://github.com/sephriot/knowledge-mcp
 cd knowledge-mcp
 
-# Build the binary
-go build -o knowledge-mcp .
+# Install with pip
+pip install -e .
 
-# Optionally, install to your GOPATH
-go install .
+# Or with uv
+uv pip install -e .
 ```
-
-### Pre-built Binaries
-
-Download the latest release from the [releases page](https://github.com/sephriot/knowledge-mcp/releases).
 
 ## Usage
 
@@ -30,13 +50,16 @@ Download the latest release from the [releases page](https://github.com/sephriot
 
 ```bash
 # Default: uses .knowledge in current directory
-./knowledge-mcp
+knowledge-mcp
+
+# Or run as module
+python -m knowledge_mcp
 
 # Custom data path
-./knowledge-mcp --data-path /path/to/knowledge
+knowledge-mcp --data-path /path/to/knowledge
 
 # Or via environment variable
-KNOWLEDGE_MCP_PATH=./my-knowledge ./knowledge-mcp
+KNOWLEDGE_MCP_PATH=./my-knowledge knowledge-mcp
 ```
 
 ### Adding to Claude Code
@@ -44,7 +67,7 @@ KNOWLEDGE_MCP_PATH=./my-knowledge ./knowledge-mcp
 #### Option 1: Using the CLI (Recommended)
 
 ```bash
-# Add as a global MCP server (assuming binary is in PATH)
+# Add as a global MCP server
 claude mcp add knowledge-mcp -- knowledge-mcp
 
 # Or with a custom data path
@@ -59,7 +82,7 @@ Create or edit `.mcp.json` in your project root:
 {
   "mcpServers": {
     "knowledge-mcp": {
-      "command": "/path/to/knowledge-mcp",
+      "command": "knowledge-mcp",
       "args": ["--data-path", ".knowledge"]
     }
   }
@@ -74,11 +97,85 @@ Edit `~/.claude/settings.json`:
 {
   "mcpServers": {
     "knowledge-mcp": {
-      "command": "/path/to/knowledge-mcp",
+      "command": "knowledge-mcp",
       "args": []
     }
   }
 }
+```
+
+#### Option 4: Using uv from GitHub (no installation required)
+
+Run directly from GitHub without installing:
+
+```json
+{
+  "mcpServers": {
+    "knowledge-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/sephriot/knowledge-mcp",
+        "knowledge-mcp",
+        "--data-path",
+        ".knowledge"
+      ]
+    }
+  }
+}
+```
+
+Or using `uv run`:
+
+```json
+{
+  "mcpServers": {
+    "knowledge-mcp": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--from",
+        "git+https://github.com/sephriot/knowledge-mcp",
+        "knowledge-mcp",
+        "--data-path",
+        ".knowledge"
+      ]
+    }
+  }
+}
+```
+
+#### Option 5: Using uv from local filesystem
+
+If you have the repository cloned locally:
+
+```json
+{
+  "mcpServers": {
+    "knowledge-mcp": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/path/to/knowledge-mcp",
+        "knowledge-mcp",
+        "--data-path",
+        ".knowledge"
+      ]
+    }
+  }
+}
+```
+
+Or install in editable mode and run:
+
+```bash
+# Install from local directory
+cd /path/to/knowledge-mcp
+uv pip install -e .
+
+# Then use standard configuration
+claude mcp add knowledge-mcp -- knowledge-mcp --data-path .knowledge
 ```
 
 ### Adding to Gemini
@@ -89,8 +186,27 @@ Edit `~/.gemini/settings.json`:
 {
   "mcpServers": {
     "knowledge-mcp": {
-      "command": "/path/to/knowledge-mcp",
+      "command": "knowledge-mcp",
       "args": ["--data-path", "/path/to/.knowledge"]
+    }
+  }
+}
+```
+
+Or using uv from GitHub (no installation required):
+
+```json
+{
+  "mcpServers": {
+    "knowledge-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/sephriot/knowledge-mcp",
+        "knowledge-mcp",
+        "--data-path",
+        "/path/to/.knowledge"
+      ]
     }
   }
 }
@@ -110,10 +226,10 @@ You should see `knowledge-mcp` in the list of available MCP servers.
 
 ```text
 .knowledge/
-├── index.json           # Fast lookup index (denormalized metadata)
+├── index.yaml           # Fast lookup index (denormalized metadata)
 └── atoms/
-    ├── K-000001.json    # Knowledge atom (JSON)
-    ├── K-000002.json
+    ├── K-000001.yaml    # Knowledge atom (YAML)
+    ├── K-000002.yaml
     └── ...
 ```
 
@@ -153,7 +269,7 @@ You should see `knowledge-mcp` in the list of available MCP servers.
 | Tool            | Description                              |
 |-----------------|------------------------------------------|
 | `export_all`    | Export all knowledge as single JSON      |
-| `rebuild_index` | Rebuild index.json from atom files       |
+| `rebuild_index` | Rebuild index.yaml from atom files       |
 
 ### Utility
 
@@ -192,7 +308,7 @@ You should see `knowledge-mcp` in the list of available MCP servers.
 {
   "tool": "search",
   "arguments": {
-    "query": "error handling",
+    "query": ["error", "handling"],
     "types": ["pattern", "gotcha"],
     "language": "typescript",
     "limit": 5
@@ -208,7 +324,7 @@ Use `include_content: true` to search within atom content (summary and details),
 {
   "tool": "search",
   "arguments": {
-    "query": "exponential backoff",
+    "query": ["exponential", "backoff"],
     "include_content": true
   }
 }
@@ -253,6 +369,26 @@ This ensures the assistant will:
 2. Apply relevant knowledge to decisions
 3. Create new atoms when discovering reusable knowledge
 4. Cite knowledge usage in responses
+
+## Development
+
+### Requirements
+
+- Python 3.11+
+- Dependencies: mcp, pyyaml, pydantic
+
+### Running tests
+
+```bash
+pip install -e ".[dev]"
+pytest tests/
+```
+
+### Type checking
+
+```bash
+mypy src/knowledge_mcp
+```
 
 ## License
 
