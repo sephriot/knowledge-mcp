@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-01-21T10:00:19Z",
+  "updated_at": "2026-01-21T16:04:23Z",
   "atoms": [
     {
       "id": "K-000001",
@@ -84,7 +84,9 @@
       "tags": [
         "search",
         "ranking",
-        "algorithm"
+        "algorithm",
+        "multi-token",
+        "OR-logic"
       ],
       "path": "atoms/K-000006.json",
       "updated_at": "2026-01-21"
