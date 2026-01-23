@@ -16,6 +16,46 @@ import (
 	"github.com/sephriot/knowledge-mcp/tools"
 )
 
+const serverInstructions = `Knowledge MCP - Project-specific knowledge management for AI agents.
+
+## Purpose
+Store and retrieve reusable knowledge to accelerate future tasks. Knowledge persists across conversations, making repeated work faster and more consistent.
+
+## PROACTIVE KNOWLEDGE CREATION (IMPORTANT)
+You are strongly encouraged to CREATE knowledge atoms proactively during your work:
+
+- After solving a non-trivial problem → create a "pattern" or "procedure" atom
+- After discovering a gotcha or pitfall → create a "gotcha" atom
+- After making an architectural decision → create a "decision" atom
+- After learning how something works → create a "fact" atom
+- After writing reusable code → create a "snippet" atom
+
+This investment pays off: future tasks in this project will be faster because you'll have context ready. Don't wait to be asked - if knowledge is reusable, capture it.
+
+## Atom Types
+- fact: Verified information about the codebase, APIs, or domain
+- decision: Architectural or design decisions with rationale
+- procedure: Step-by-step instructions for tasks
+- pattern: Reusable solutions or code patterns
+- gotcha: Pitfalls, common mistakes, or non-obvious behavior
+- glossary: Domain-specific terms and definitions
+- snippet: Reusable code fragments
+
+## Search Behavior
+- Uses OR logic: any matching token scores points
+- More matches = higher score (cumulative)
+- Use include_content=true for thorough searches
+- Filter by type/tags/language to narrow results
+
+## Best Practices
+1. Search BEFORE creating to avoid duplicates
+2. Use descriptive titles and relevant tags
+3. Keep atoms focused (one concept per atom)
+4. Include sources (file paths, URLs) when applicable
+5. Link related atoms using the links field
+6. Mark confidence appropriately (high/medium/low)
+7. Update existing atoms rather than creating duplicates`
+
 func main() {
 	dataPath := flag.String("data-path", "", "Path to knowledge storage (default: .knowledge or KNOWLEDGE_MCP_PATH env)")
 	flag.Parse()
@@ -30,6 +70,7 @@ func main() {
 		"0.1.0",
 		server.WithResourceCapabilities(true, true),
 		server.WithToolCapabilities(true),
+		server.WithInstructions(serverInstructions),
 	)
 
 	// Initialize shared index manager and tools

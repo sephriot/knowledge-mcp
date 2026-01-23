@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-01-21T16:04:23Z",
+  "updated_at": "2026-01-23T14:35:20Z",
   "atoms": [
     {
       "id": "K-000001",
@@ -119,10 +119,11 @@
         "mcp",
         "dependency",
         "library",
-        "mcp-go"
+        "mcp-go",
+        "instructions"
       ],
       "path": "atoms/K-000008.json",
-      "updated_at": "2026-01-21"
+      "updated_at": "2026-01-23"
     },
     {
       "id": "K-000009",
