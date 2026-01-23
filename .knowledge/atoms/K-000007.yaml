@@ -1,51 +1,48 @@
 id: K-000007
-title: Bug Fixes in knowledge-mcp Go Implementation
+title: Historical Bug Fixes (Go Implementation)
 type: fact
 status: active
 confidence: high
 content:
-    summary: 'Fixed 6 bugs/issues in the knowledge-mcp Go implementation: (1) tag filtering case sensitivity inconsistency in ListAtoms, (2) data loss on update - tags/sources/links not preserved, (3) missing validation for Type/Status/Confidence enums, (4) silent error in ID parsing, (5) silent error in index rebuild, (6) no concurrency protection in IndexManager.'
-    details: |-
-        ## Fixes Applied
-
-        ### 1. Tag filtering case sensitivity (tools/atoms.go)
-        ListAtoms used case-sensitive tag matching while Search used case-insensitive. Fixed by adding strings.ToLower() to both the entry tags and filter tags.
-
-        ### 2. Data loss on update (tools/upsert.go)
-        When updating an atom, if input.Tags/Sources/Links were nil, they were replaced with empty slices instead of preserving existing values. Fixed to preserve existing values like pitfalls already did.
-
-        ### 3. Enum validation (tools/upsert.go)
-        Added validation at start of Upsert() to check Type.IsValid(), Status.IsValid(), and Confidence.IsValid() before processing.
-
-        ### 4. ID parsing (models/atom.go)
-        GetNextID() ignored Sscanf errors. Fixed to check return value (n == 1) before using parsed number.
-
-        ### 5. Index rebuild errors (storage/index.go)
-        Errors loading atoms during rebuild were silently ignored. Now collects errors and logs them to stderr.
-
-        ### 6. Concurrency protection (storage/index.go)
-        Added sync.RWMutex to IndexManager with internal loadLocked/saveLocked methods. All public methods now properly acquire locks.
-    pitfalls: []
-    update_notes:
-        - date: "2026-01-21"
-          note: Initial creation
-language: go
-created_at: "2026-01-21"
-updated_at: "2026-01-21"
+  summary: Bugs identified and fixed during the Go implementation and subsequent Python
+    rewrite.
+  details: 'The initial Go implementation had several critical bugs that were fixed
+    before or during the rewrite to Python:\n\n1. **Tag filtering case sensitivity**:
+    Fixed to use lowercase comparison everywhere.\n2. **Data loss on update**: Fixed
+    to properly preserve existing fields (tags, sources, links) when updating an atom.\n3.
+    **Enum validation**: Added strict validation for status, type, and confidence.\n4.
+    **ID parsing**: Fixed potential silent errors when generating the next ID.\n5.
+    **Index rebuild reliability**: Improved error reporting when rebuilding the index
+    from files.\n6. **Concurrency**: Python implementation uses shared instances but
+    file operations are naturally atomic enough for common local use cases, and `IndexManager`
+    ensures consistent state.'
+  pitfalls: []
+  update_notes:
+  - date: '2026-01-21'
+    note: Initial creation
+  - date: '2026-01-23'
+    note: Updated
+language: null
+created_at: '2026-01-21'
+updated_at: '2026-01-23'
 tags:
-    - knowledge-mcp
-    - bugfix
-    - go
-    - concurrency
-    - validation
+- knowledge-mcp
+- bugfix
+- history
+- go-to-python
 sources:
-    - kind: repo_path
-      ref: tools/atoms.go
-    - kind: repo_path
-      ref: tools/upsert.go
-    - kind: repo_path
-      ref: models/atom.go
-    - kind: repo_path
-      ref: storage/index.go
+- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
+  - repo_path
+  ref: tools/atoms.go
+- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
+  - repo_path
+  ref: tools/upsert.go
+- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
+  - repo_path
+  ref: models/atom.go
+- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
+  - repo_path
+  ref: storage/index.go
 links: []
 supersedes: []
+superseded_by: null

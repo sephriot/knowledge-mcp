@@ -4,56 +4,35 @@ type: pattern
 status: active
 confidence: high
 content:
-    summary: The config package handles data path resolution with fallback logic and provides path helpers for storage locations.
-    details: |-
-        ## Path Resolution Priority
-
-        1. `--data-path` CLI flag (if provided)
-        2. `KNOWLEDGE_MCP_PATH` environment variable
-        3. Default: `.knowledge` in current working directory
-
-        Relative paths are automatically resolved to absolute paths using the current working directory.
-
-        ## Key Functions
-
-        | Function | Description |
-        |----------|-------------|
-        | `New(dataPath)` | Create config with path resolution |
-        | `IndexPath()` | Returns `{DataPath}/index.json` |
-        | `AtomsPath()` | Returns `{DataPath}/atoms` |
-        | `EnsureDirs()` | Creates storage directories if missing |
-        | `GetConfig()` | Returns global config singleton |
-        | `SetConfig(cfg)` | Sets global config singleton |
-
-        ## Usage Pattern
-
-        ```go
-        // In main.go
-        cfg := config.New(*dataPath)  // From CLI flag
-        config.SetConfig(cfg)         // Set as global
-
-        // In other packages
-        cfg := config.GetConfig()
-        indexPath := cfg.IndexPath()
-        ```
-    pitfalls:
-        - Relative paths are resolved at startup time - changing working directory later won't affect stored paths.
-        - GetConfig() creates a default config if none was set, which may not be desired.
-    update_notes:
-        - date: "2026-01-21"
-          note: Initial creation
-language: go
-created_at: "2026-01-21"
-updated_at: "2026-01-21"
+  summary: Configuration and path resolution for knowledge storage.
+  details: 'Config resolution priority:\n1. CLI argument `--data-path`\n2. `KNOWLEDGE_MCP_PATH`
+    environment variable\n3. Default: `.knowledge` in current directory\n\nUses `pathlib.Path`
+    for cross-platform path handling. The `Config` class ensures absolute paths are
+    resolved and required directories exist. Uses `index.yaml` for metadata storage.'
+  pitfalls:
+  - Relative paths are resolved at startup time - changing working directory later
+    won't affect stored paths.
+  - GetConfig() creates a default config if none was set, which may not be desired.
+  update_notes:
+  - date: '2026-01-21'
+    note: Initial creation
+  - date: '2026-01-23'
+    note: Updated
+language: python
+created_at: '2026-01-21'
+updated_at: '2026-01-23'
 tags:
-    - config
-    - path-resolution
-    - storage
-    - singleton
+- config
+- path-resolution
+- storage
+- python
 sources:
-    - kind: repo_path
-      ref: config/config.go
+- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
+  - repo_path
+  ref: src/knowledge_mcp/config.py
 links:
-    - rel: see_also
-      id: K-000003
+- rel: !!python/object/apply:knowledge_mcp.models.enums.LinkRel
+  - see_also
+  id: K-000003
 supersedes: []
+superseded_by: null

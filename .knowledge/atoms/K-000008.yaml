@@ -1,80 +1,42 @@
 id: K-000008
-title: MCP-Go Library Dependency
+title: MCP-Python Library Dependency
 type: fact
 status: active
 confidence: high
 content:
-    summary: The project uses github.com/mark3labs/mcp-go for MCP protocol implementation.
-    details: |-
-        ## Dependency
-
-        ```go
-        require github.com/mark3labs/mcp-go v0.27.0
-        ```
-
-        ## Usage in main.go
-
-        The library provides:
-        - `mcp.NewTool()` - Define MCP tools with parameters
-        - `mcp.WithDescription()`, `mcp.WithString()`, `mcp.WithArray()`, etc. - Tool configuration
-        - `server.NewMCPServer()` - Create MCP server instance
-        - `server.WithInstructions()` - Add server instructions for LLM guidance
-        - `server.ServeStdio()` - Start stdio transport
-
-        ## Server Instructions
-
-        MCP servers can provide instructions to help LLMs understand how to use their tools:
-
-        ```go
-        s := server.NewMCPServer(
-            "server-name",
-            "0.1.0",
-            server.WithInstructions(`Instructions for the LLM about how to use this server...`),
-        )
-        ```
-
-        Instructions are returned in the `initialize` response and clients (like Claude Code) may add them to the system prompt. Use this to:
-        - Explain when and how to use tools
-        - Encourage specific behaviors (e.g., proactive knowledge creation)
-        - Document best practices
-
-        ## Key Patterns
-
-        ```go
-        s := server.NewMCPServer(
-            "knowledge-mcp",
-            "0.1.0",
-            server.WithResourceCapabilities(true, true),
-            server.WithToolCapabilities(true),
-            server.WithInstructions(serverInstructions),
-        )
-
-        s.AddTool(mcp.NewTool("tool_name",
-            mcp.WithDescription("..."),
-            mcp.WithString("param", mcp.Required()),
-        ), handlerFunc)
-
-        server.ServeStdio(s)
-        ```
-    pitfalls: []
-    update_notes:
-        - date: "2026-01-21"
-          note: Initial creation
-        - date: "2026-01-23"
-          note: Updated
-language: go
-created_at: "2026-01-21"
-updated_at: "2026-01-23"
+  summary: The project uses mcp-python (FastMCP) for MCP protocol implementation.
+  details: "The project uses the `mcp` Python library (v1.0.0+) for MCP protocol implementation,\
+    \ specifically utilizing the `FastMCP` class for high-level tool registration\
+    \ and server management.\n\n## Dependency\n```toml\ndependencies = [\n    \"mcp[cli]>=1.0.0\"\
+    ,\n]\n```\n\n## Usage in server.py\n- `mcp = FastMCP(\"name\", instructions=...)`\
+    \ - Create server\n- `@mcp.tool()` - Register tools using decorators\n- `mcp.run()`\
+    \ - Run server using stdio transport\n\n## Server Instructions\nInstructions are\
+    \ passed to `FastMCP` constructor and are returned to the client during initialization.\
+    \ They guide the LLM on how to use the knowledge base effectively."
+  pitfalls: []
+  update_notes:
+  - date: '2026-01-21'
+    note: Initial creation
+  - date: '2026-01-23'
+    note: Updated
+  - date: '2026-01-23'
+    note: Updated
+language: python
+created_at: '2026-01-21'
+updated_at: '2026-01-23'
 tags:
-    - mcp
-    - dependency
-    - library
-    - mcp-go
-    - instructions
+- mcp
+- dependency
+- python
+- fastmcp
+- instructions
 sources:
-    - kind: repo_path
-      ref: go.mod
-    - kind: repo_path
-      ref: main.go
+- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
+  - repo_path
+  ref: pyproject.toml
+- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
+  - repo_path
+  ref: src/knowledge_mcp/server.py
 links: []
 supersedes: []
+superseded_by: null

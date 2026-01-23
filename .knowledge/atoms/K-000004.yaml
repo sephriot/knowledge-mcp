@@ -4,20 +4,30 @@ type: procedure
 status: active
 confidence: high
 content:
-    summary: Steps to build the Go binary.
-    details: Run `go build -o knowledge-mcp .` in the root directory. To install to GOPATH, run `go install .`
-    pitfalls:
-        - Ensure Go 1.24 or later is installed.
-    update_notes:
-        - date: "2026-01-21"
-          note: Initial creation
-created_at: "2026-01-21"
-updated_at: "2026-01-21"
+  summary: Installation and development setup for Python.
+  details: 'Install the package in editable mode for development: `pip install -e .`.
+    For development dependencies: `pip install -e .[dev]`. Requirements: Python 3.11
+    or later.'
+  pitfalls:
+  - Ensure Python 3.11+ is available. Recommend using a virtual environment (venv).
+  update_notes:
+  - date: '2026-01-21'
+    note: Initial creation
+  - date: '2026-01-23'
+    note: Updated
+language: null
+created_at: '2026-01-21'
+updated_at: '2026-01-23'
 tags:
-    - build
-    - go
+- build
+- python
+- pip
+- install
 sources:
-    - kind: repo_path
-      ref: README.md
+- kind: repo_path
+  ref: pyproject.toml
+- kind: repo_path
+  ref: README.md
 links: []
 supersedes: []
+superseded_by: null
