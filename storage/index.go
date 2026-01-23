@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/sephriot/knowledge-mcp/config"
 	"github.com/sephriot/knowledge-mcp/models"
@@ -27,14 +30,27 @@ func NewIndexManager(cfg *config.Config) *IndexManager {
 }
 
 // loadLocked loads the index from disk. Caller must hold the lock.
+// Tries YAML first, falls back to JSON for backward compatibility.
 func (m *IndexManager) loadLocked() error {
 	if m.index != nil {
 		return nil
 	}
 
 	indexPath := m.config.IndexPath()
+	indexPathJSON := m.config.IndexPathJSON()
 
-	data, err := os.ReadFile(indexPath)
+	// Try YAML first
+	if data, err := os.ReadFile(indexPath); err == nil {
+		var index models.Index
+		if err := yaml.Unmarshal(data, &index); err != nil {
+			return fmt.Errorf("failed to unmarshal YAML index: %w", err)
+		}
+		m.index = &index
+		return nil
+	}
+
+	// Fall back to JSON
+	data, err := os.ReadFile(indexPathJSON)
 	if err != nil {
 		if os.IsNotExist(err) {
 			m.index = models.NewEmptyIndex()
@@ -45,14 +61,15 @@ func (m *IndexManager) loadLocked() error {
 
 	var index models.Index
 	if err := json.Unmarshal(data, &index); err != nil {
-		return fmt.Errorf("failed to unmarshal index: %w", err)
+		return fmt.Errorf("failed to unmarshal JSON index: %w", err)
 	}
 
 	m.index = &index
 	return nil
 }
 
-// saveLocked saves the index to disk. Caller must hold the lock.
+// saveLocked saves the index to disk in YAML format. Caller must hold the lock.
+// If a legacy JSON index file exists, it is deleted.
 func (m *IndexManager) saveLocked() error {
 	if m.index == nil {
 		return nil
@@ -63,14 +80,20 @@ func (m *IndexManager) saveLocked() error {
 	}
 
 	indexPath := m.config.IndexPath()
+	indexPathJSON := m.config.IndexPathJSON()
 
-	data, err := json.MarshalIndent(m.index, "", "  ")
+	data, err := yaml.Marshal(m.index)
 	if err != nil {
-		return fmt.Errorf("failed to marshal index: %w", err)
+		return fmt.Errorf("failed to marshal index to YAML: %w", err)
 	}
 
 	if err := os.WriteFile(indexPath, data, 0644); err != nil {
 		return fmt.Errorf("failed to write index file: %w", err)
+	}
+
+	// Clean up legacy JSON index file if it exists
+	if _, err := os.Stat(indexPathJSON); err == nil {
+		os.Remove(indexPathJSON) // Best effort, ignore errors
 	}
 
 	return nil
@@ -178,17 +201,25 @@ func (m *IndexManager) RebuildFromAtoms(atomsPath string) (*models.Index, error)
 		return nil, fmt.Errorf("failed to read atoms directory: %w", err)
 	}
 
-	var loadErrors []string
+	// Collect unique atom IDs (may have both .yaml and .json for same atom)
+	idSet := make(map[string]bool)
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
 		}
 		name := entry.Name()
-		if !strings.HasPrefix(name, "K-") || !strings.HasSuffix(name, ".json") {
+		if !strings.HasPrefix(name, "K-") {
 			continue
 		}
+		if strings.HasSuffix(name, ".yaml") {
+			idSet[strings.TrimSuffix(name, ".yaml")] = true
+		} else if strings.HasSuffix(name, ".json") {
+			idSet[strings.TrimSuffix(name, ".json")] = true
+		}
+	}
 
-		atomID := strings.TrimSuffix(name, ".json")
+	var loadErrors []string
+	for atomID := range idSet {
 		atom, err := storage.Load(atomID)
 		if err != nil {
 			loadErrors = append(loadErrors, fmt.Sprintf("%s: %v", atomID, err))
@@ -213,6 +244,57 @@ func (m *IndexManager) RebuildFromAtoms(atomsPath string) (*models.Index, error)
 	}
 
 	return m.index, nil
+}
+
+// MigrateAndRebuild migrates all JSON atoms to YAML and rebuilds the index.
+func (m *IndexManager) MigrateAndRebuild(atomsPath string) (*models.Index, int, error) {
+	storage := NewAtomStorage(m.config)
+
+	// Collect all JSON files that need migration
+	entries, err := os.ReadDir(atomsPath)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, 0, fmt.Errorf("failed to read atoms directory: %w", err)
+	}
+
+	var migrated int
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		if !strings.HasPrefix(name, "K-") || !strings.HasSuffix(name, ".json") {
+			continue
+		}
+
+		atomID := strings.TrimSuffix(name, ".json")
+		yamlPath := filepath.Join(atomsPath, atomID+".yaml")
+
+		// Skip if YAML already exists
+		if _, err := os.Stat(yamlPath); err == nil {
+			continue
+		}
+
+		// Load from JSON (will use JSON since YAML doesn't exist)
+		atom, err := storage.Load(atomID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: failed to load %s for migration: %v\n", atomID, err)
+			continue
+		}
+		if atom == nil {
+			continue
+		}
+
+		// Save as YAML (this also deletes the JSON file)
+		if _, err := storage.Save(atom); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: failed to migrate %s: %v\n", atomID, err)
+			continue
+		}
+		migrated++
+	}
+
+	// Now rebuild the index
+	index, err := m.RebuildFromAtoms(atomsPath)
+	return index, migrated, err
 }
 
 // InvalidateCache invalidates the cached index.

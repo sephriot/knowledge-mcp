@@ -1,0 +1,68 @@
+id: K-000010
+title: Destructive and Utility Tools
+type: fact
+status: active
+confidence: high
+content:
+    summary: 'Additional tools beyond core CRUD: purge_atom for permanent deletion, list_all_ids for inventory, and rebuild_index for recovery.'
+    details: |-
+        ## Destructive Tools
+
+        ### purge_atom
+        Permanently deletes an atom from storage. **Cannot be undone.**
+
+        ```json
+        {"tool": "purge_atom", "arguments": {"id": "K-000001"}}
+        ```
+
+        Use `delete_atom` instead to deprecate (sets status to "deprecated" but preserves the atom).
+
+        ### rebuild_index
+        Rebuilds `index.json` from atom files on disk. Use when index gets out of sync.
+
+        ```json
+        {"tool": "rebuild_index", "arguments": {}}
+        ```
+
+        Logs errors to stderr for any atoms that fail to load.
+
+        ## Utility Tools
+
+        ### list_all_ids
+        Lists all atom IDs in storage (sorted).
+
+        ```json
+        {"tool": "list_all_ids", "arguments": {}}
+        ```
+
+        Returns: `{"ids": ["K-000001", "K-000002", ...], "count": 7}`
+
+        ### get_next_id
+        Gets the next available atom ID without creating an atom.
+
+        ```json
+        {"tool": "get_next_id", "arguments": {}}
+        ```
+
+        Returns: `{"next_id": "K-000008"}`
+    pitfalls:
+        - purge_atom is irreversible - prefer delete_atom for soft deletion
+        - rebuild_index should only be used when index is corrupted or out of sync
+    update_notes:
+        - date: "2026-01-21"
+          note: Initial creation
+created_at: "2026-01-21"
+updated_at: "2026-01-21"
+tags:
+    - tools
+    - purge
+    - delete
+    - utility
+    - index
+sources:
+    - kind: repo_path
+      ref: tools/atoms.go
+    - kind: repo_path
+      ref: main.go
+links: []
+supersedes: []

@@ -1,0 +1,21 @@
+id: K-000001
+title: Knowledge MCP Server Overview
+type: fact
+status: active
+confidence: high
+content:
+    summary: An MCP server for persistent project-specific knowledge management.
+    details: Uses stdio transport and JSON-based storage. Designed for coding agents like Claude Code and Gemini. Each project has its own `.knowledge` directory.
+    pitfalls: []
+    update_notes:
+        - date: "2026-01-21"
+          note: Initial creation
+created_at: "2026-01-21"
+updated_at: "2026-01-21"
+tags:
+    - mcp
+    - go
+    - knowledge-management
+sources: []
+links: []
+supersedes: []

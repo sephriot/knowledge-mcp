@@ -96,8 +96,8 @@ const (
 
 // Source represents a reference source for a knowledge atom.
 type Source struct {
-	Kind SourceKind `json:"kind"`
-	Ref  string     `json:"ref"`
+	Kind SourceKind `json:"kind" yaml:"kind"`
+	Ref  string     `json:"ref" yaml:"ref"`
 }
 
 // LinkRel represents the relationship type of a link.
@@ -111,53 +111,53 @@ const (
 
 // Link represents a link to another knowledge atom.
 type Link struct {
-	Rel LinkRel `json:"rel"`
-	ID  string  `json:"id"`
+	Rel LinkRel `json:"rel" yaml:"rel"`
+	ID  string  `json:"id" yaml:"id"`
 }
 
 // UpdateNote represents a note about an update to the atom.
 type UpdateNote struct {
-	Date string `json:"date"`
-	Note string `json:"note"`
+	Date string `json:"date" yaml:"date"`
+	Note string `json:"note" yaml:"note"`
 }
 
 // AtomContent represents the content of a knowledge atom.
 type AtomContent struct {
-	Summary     string       `json:"summary"`
-	Details     string       `json:"details"`
-	Pitfalls    []string     `json:"pitfalls"`
-	UpdateNotes []UpdateNote `json:"update_notes"`
+	Summary     string       `json:"summary" yaml:"summary"`
+	Details     string       `json:"details" yaml:"details"`
+	Pitfalls    []string     `json:"pitfalls" yaml:"pitfalls"`
+	UpdateNotes []UpdateNote `json:"update_notes" yaml:"update_notes"`
 }
 
 // Atom represents a knowledge atom - the fundamental unit of knowledge storage.
 type Atom struct {
-	ID           string      `json:"id"`
-	Title        string      `json:"title"`
-	Type         AtomType    `json:"type"`
-	Status       AtomStatus  `json:"status"`
-	Confidence   Confidence  `json:"confidence"`
-	Content      AtomContent `json:"content"`
-	Language     *string     `json:"language,omitempty"`
-	CreatedAt    string      `json:"created_at"`
-	UpdatedAt    string      `json:"updated_at"`
-	Tags         []string    `json:"tags"`
-	Sources      []Source    `json:"sources"`
-	Links        []Link      `json:"links"`
-	Supersedes   []string    `json:"supersedes"`
-	SupersededBy *string     `json:"superseded_by,omitempty"`
+	ID           string      `json:"id" yaml:"id"`
+	Title        string      `json:"title" yaml:"title"`
+	Type         AtomType    `json:"type" yaml:"type"`
+	Status       AtomStatus  `json:"status" yaml:"status"`
+	Confidence   Confidence  `json:"confidence" yaml:"confidence"`
+	Content      AtomContent `json:"content" yaml:"content"`
+	Language     *string     `json:"language,omitempty" yaml:"language,omitempty"`
+	CreatedAt    string      `json:"created_at" yaml:"created_at"`
+	UpdatedAt    string      `json:"updated_at" yaml:"updated_at"`
+	Tags         []string    `json:"tags" yaml:"tags"`
+	Sources      []Source    `json:"sources" yaml:"sources"`
+	Links        []Link      `json:"links" yaml:"links"`
+	Supersedes   []string    `json:"supersedes" yaml:"supersedes"`
+	SupersededBy *string     `json:"superseded_by,omitempty" yaml:"superseded_by,omitempty"`
 }
 
 // IndexEntry represents an entry in the index for fast lookup.
 type IndexEntry struct {
-	ID         string     `json:"id"`
-	Title      string     `json:"title"`
-	Type       AtomType   `json:"type"`
-	Status     AtomStatus `json:"status"`
-	Confidence Confidence `json:"confidence"`
-	Language   *string    `json:"language,omitempty"`
-	Tags       []string   `json:"tags"`
-	Path       string     `json:"path"`
-	UpdatedAt  string     `json:"updated_at"`
+	ID         string     `json:"id" yaml:"id"`
+	Title      string     `json:"title" yaml:"title"`
+	Type       AtomType   `json:"type" yaml:"type"`
+	Status     AtomStatus `json:"status" yaml:"status"`
+	Confidence Confidence `json:"confidence" yaml:"confidence"`
+	Language   *string    `json:"language,omitempty" yaml:"language,omitempty"`
+	Tags       []string   `json:"tags" yaml:"tags"`
+	Path       string     `json:"path" yaml:"path"`
+	UpdatedAt  string     `json:"updated_at" yaml:"updated_at"`
 }
 
 // NewIndexEntryFromAtom creates an index entry from an atom.
@@ -170,16 +170,16 @@ func NewIndexEntryFromAtom(atom *Atom) *IndexEntry {
 		Confidence: atom.Confidence,
 		Language:   atom.Language,
 		Tags:       atom.Tags,
-		Path:       fmt.Sprintf("atoms/%s.json", atom.ID),
+		Path:       fmt.Sprintf("atoms/%s.yaml", atom.ID),
 		UpdatedAt:  atom.UpdatedAt,
 	}
 }
 
 // Index represents the index of all knowledge atoms for fast lookup.
 type Index struct {
-	Version   int           `json:"version"`
-	UpdatedAt string        `json:"updated_at"`
-	Atoms     []*IndexEntry `json:"atoms"`
+	Version   int           `json:"version" yaml:"version"`
+	UpdatedAt string        `json:"updated_at" yaml:"updated_at"`
+	Atoms     []*IndexEntry `json:"atoms" yaml:"atoms"`
 }
 
 // NewEmptyIndex creates a new empty index.

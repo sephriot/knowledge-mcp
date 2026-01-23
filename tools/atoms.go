@@ -236,18 +236,26 @@ func (t *AtomTools) ExportAll(format string) (map[string]any, error) {
 	}, nil
 }
 
-// RebuildIndex rebuilds index.json from atom files.
+// RebuildIndex migrates JSON atoms to YAML and rebuilds the index.
 func (t *AtomTools) RebuildIndex() (map[string]any, error) {
-	index, err := t.indexManager.RebuildFromAtoms(t.config.AtomsPath())
+	index, migrated, err := t.indexManager.MigrateAndRebuild(t.config.AtomsPath())
 	if err != nil {
 		return nil, err
 	}
 
-	return map[string]any{
-		"success": true,
-		"count":   len(index.Atoms),
-		"message": fmt.Sprintf("Index rebuilt with %d atoms", len(index.Atoms)),
-	}, nil
+	result := map[string]any{
+		"success":        true,
+		"atoms_indexed":  len(index.Atoms),
+		"atoms_migrated": migrated,
+	}
+
+	if migrated > 0 {
+		result["message"] = fmt.Sprintf("Migrated %d atoms from JSON to YAML, index rebuilt with %d atoms", migrated, len(index.Atoms))
+	} else {
+		result["message"] = fmt.Sprintf("Index rebuilt with %d atoms", len(index.Atoms))
+	}
+
+	return result, nil
 }
 
 // GetSummary gets summary of knowledge grouped by type, tag, or language.

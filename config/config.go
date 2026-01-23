@@ -32,8 +32,13 @@ func New(dataPath string) *Config {
 	}
 }
 
-// IndexPath returns the path to the index.json file.
+// IndexPath returns the path to the index.yaml file.
 func (c *Config) IndexPath() string {
+	return filepath.Join(c.DataPath, "index.yaml")
+}
+
+// IndexPathJSON returns the path to the legacy index.json file.
+func (c *Config) IndexPathJSON() string {
 	return filepath.Join(c.DataPath, "index.json")
 }
 

@@ -1,0 +1,77 @@
+id: K-000005
+title: Integrating with AI Assistants
+type: procedure
+status: active
+confidence: high
+content:
+    summary: How to configure Claude Code, Gemini, or other AI assistants to use this MCP server.
+    details: |-
+        ## Claude Code
+
+        ### Option 1: CLI (Recommended)
+        ```bash
+        claude mcp add knowledge-mcp -- knowledge-mcp
+        ```
+
+        ### Option 2: Project-level (.mcp.json)
+        ```json
+        {
+          "mcpServers": {
+            "knowledge-mcp": {
+              "command": "/path/to/knowledge-mcp",
+              "args": ["--data-path", ".knowledge"]
+            }
+          }
+        }
+        ```
+
+        ### Option 3: Global (~/.claude/settings.json)
+        ```json
+        {
+          "mcpServers": {
+            "knowledge-mcp": {
+              "command": "/path/to/knowledge-mcp",
+              "args": []
+            }
+          }
+        }
+        ```
+
+        ## Gemini
+
+        Edit `~/.gemini/settings.json`:
+        ```json
+        {
+          "mcpServers": {
+            "knowledge-mcp": {
+              "command": "/path/to/knowledge-mcp",
+              "args": ["--data-path", "/path/to/.knowledge"]
+            }
+          }
+        }
+        ```
+
+        ## System Prompt Integration
+
+        Append contents of `SYSTEM_PROMPT.md` to your assistant's config file (`~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md`, etc.) to ensure automatic knowledge retrieval and updates.
+    pitfalls:
+        - Paths to the binary must be absolute or in the system PATH.
+        - For project-level config, use relative paths like '.knowledge' for portability.
+    update_notes:
+        - date: "2026-01-21"
+          note: Initial creation
+        - date: "2026-01-21"
+          note: Updated
+created_at: "2026-01-21"
+updated_at: "2026-01-21"
+tags:
+    - integration
+    - claude
+    - gemini
+    - configuration
+    - mcp
+sources:
+    - kind: repo_path
+      ref: README.md
+links: []
+supersedes: []
