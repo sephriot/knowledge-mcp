@@ -54,17 +54,21 @@ This investment pays off: future tasks in this project will be faster because yo
 7. Update existing atoms rather than creating duplicates"""
 
 
-def create_server(data_path: str | None = None) -> FastMCP:
+def create_server(
+    data_path: str | None = None,
+    persist_popularity: bool = False,
+) -> FastMCP:
     """Create and configure the FastMCP server.
 
     Args:
         data_path: Path to knowledge storage directory
+        persist_popularity: Whether to persist popularity counts to disk
 
     Returns:
         Configured FastMCP server instance
     """
     # Initialize configuration
-    cfg = create_config(data_path)
+    cfg = create_config(data_path, persist_popularity=persist_popularity)
     set_config(cfg)
 
     # Create server with instructions

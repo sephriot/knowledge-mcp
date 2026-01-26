@@ -104,7 +104,9 @@ class IndexManager:
             return self._index.find_by_id(atom_id)
 
     def increment_popularity(self, atom_id: str) -> bool:
-        """Increment popularity counter for an atom (thread-safe, in-memory).
+        """Increment popularity counter for an atom (thread-safe).
+
+        Persistence depends on config.persist_popularity setting.
 
         Args:
             atom_id: The atom ID to increment popularity for
@@ -119,6 +121,8 @@ class IndexManager:
             if entry is None:
                 return False
             entry.popularity += 1
+            if self.config.persist_popularity:
+                self._save_locked()
             return True
 
     def get_next_id(self) -> str:

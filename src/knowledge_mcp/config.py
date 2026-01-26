@@ -10,6 +10,7 @@ class Config:
     """Configuration for the knowledge storage."""
 
     data_path: Path
+    persist_popularity: bool = False
 
     def __post_init__(self) -> None:
         """Resolve relative paths to absolute paths."""
@@ -38,17 +39,24 @@ class Config:
         self.atoms_path.mkdir(parents=True, exist_ok=True)
 
 
-def create_config(data_path: str | None = None) -> Config:
+def create_config(
+    data_path: str | None = None,
+    persist_popularity: bool = False,
+) -> Config:
     """Create config from CLI arg, env var, or default.
 
     Priority:
     1. CLI argument (data_path parameter)
     2. KNOWLEDGE_MCP_PATH environment variable
     3. Default: .knowledge
+
+    Args:
+        data_path: Path to knowledge storage directory
+        persist_popularity: Whether to persist popularity counts to disk on each retrieval
     """
     if not data_path:
         data_path = os.environ.get("KNOWLEDGE_MCP_PATH", ".knowledge")
-    return Config(data_path=Path(data_path))
+    return Config(data_path=Path(data_path), persist_popularity=persist_popularity)
 
 
 # Global config instance
