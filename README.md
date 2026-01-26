@@ -60,7 +60,28 @@ knowledge-mcp --data-path /path/to/knowledge
 
 # Or via environment variable
 KNOWLEDGE_MCP_PATH=./my-knowledge knowledge-mcp
+
+# Enable persistent popularity tracking
+knowledge-mcp --persist-popularity
 ```
+
+### CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `--data-path PATH` | Path to knowledge storage directory (default: `.knowledge` or `KNOWLEDGE_MCP_PATH` env) |
+| `--persist-popularity` | Persist popularity counts to disk on each atom retrieval |
+
+#### Popularity Tracking
+
+The server tracks how often each atom is retrieved via `get_atom`. This popularity score influences search ranking (more popular atoms rank higher). By default, popularity is tracked in memory only and persists when other index changes occur.
+
+Use `--persist-popularity` to write popularity counts to disk immediately on each retrieval. This is useful when:
+- Running short-lived sessions where in-memory counts would be lost
+- You want guaranteed persistence of usage patterns
+- Multiple server instances share the same storage
+
+Note: Enabling this option increases disk writes. For most use cases, the default behavior is sufficient.
 
 ### Adding to Claude Code
 
