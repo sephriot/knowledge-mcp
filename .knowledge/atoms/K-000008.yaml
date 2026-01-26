@@ -5,14 +5,23 @@ status: active
 confidence: high
 content:
   summary: The project uses mcp-python (FastMCP) for MCP protocol implementation.
-  details: "The project uses the `mcp` Python library (v1.0.0+) for MCP protocol implementation,\
-    \ specifically utilizing the `FastMCP` class for high-level tool registration\
-    \ and server management.\n\n## Dependency\n```toml\ndependencies = [\n    \"mcp[cli]>=1.0.0\"\
-    ,\n]\n```\n\n## Usage in server.py\n- `mcp = FastMCP(\"name\", instructions=...)`\
-    \ - Create server\n- `@mcp.tool()` - Register tools using decorators\n- `mcp.run()`\
-    \ - Run server using stdio transport\n\n## Server Instructions\nInstructions are\
-    \ passed to `FastMCP` constructor and are returned to the client during initialization.\
-    \ They guide the LLM on how to use the knowledge base effectively."
+  details: |-
+    The project uses the `mcp` Python library (v1.0.0+) for MCP protocol implementation, specifically utilizing the `FastMCP` class for high-level tool registration and server management.
+
+    ## Dependency
+    ```toml
+    dependencies = [
+        "mcp[cli]>=1.0.0",
+    ]
+    ```
+
+    ## Usage in server.py
+    - `mcp = FastMCP("name", instructions=...)` - Create server
+    - `@mcp.tool()` - Register tools using decorators
+    - `mcp.run()` - Run server using stdio transport
+
+    ## Server Instructions
+    Instructions are passed to `FastMCP` constructor and are returned to the client during initialization. They guide the LLM on how to use the knowledge base effectively.
   pitfalls: []
   update_notes:
   - date: '2026-01-21'
@@ -21,9 +30,15 @@ content:
     note: Updated
   - date: '2026-01-23'
     note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: python
 created_at: '2026-01-21'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - mcp
 - dependency

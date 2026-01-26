@@ -6,25 +6,28 @@ confidence: high
 content:
   summary: Bugs identified and fixed during the Go implementation and subsequent Python
     rewrite.
-  details: 'The initial Go implementation had several critical bugs that were fixed
-    before or during the rewrite to Python:\n\n1. **Tag filtering case sensitivity**:
-    Fixed to use lowercase comparison everywhere.\n2. **Data loss on update**: Fixed
-    to properly preserve existing fields (tags, sources, links) when updating an atom.\n3.
-    **Enum validation**: Added strict validation for status, type, and confidence.\n4.
-    **ID parsing**: Fixed potential silent errors when generating the next ID.\n5.
-    **Index rebuild reliability**: Improved error reporting when rebuilding the index
-    from files.\n6. **Concurrency**: Python implementation uses shared instances but
-    file operations are naturally atomic enough for common local use cases, and `IndexManager`
-    ensures consistent state.'
+  details: |-
+    The initial Go implementation had several critical bugs that were fixed before or during the rewrite to Python:
+
+    1. **Tag filtering case sensitivity**: Fixed to use lowercase comparison everywhere.
+    2. **Data loss on update**: Fixed to properly preserve existing fields (tags, sources, links) when updating an atom.
+    3. **Enum validation**: Added strict validation for status, type, and confidence.
+    4. **ID parsing**: Fixed potential silent errors when generating the next ID.
+    5. **Index rebuild reliability**: Improved error reporting when rebuilding the index from files.
+    6. **Concurrency**: Python implementation uses shared instances but file operations are naturally atomic enough for common local use cases, and `IndexManager` ensures consistent state.
   pitfalls: []
   update_notes:
   - date: '2026-01-21'
     note: Initial creation
   - date: '2026-01-23'
     note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: null
 created_at: '2026-01-21'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - knowledge-mcp
 - bugfix

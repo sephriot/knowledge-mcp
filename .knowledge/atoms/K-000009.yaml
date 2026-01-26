@@ -5,10 +5,13 @@ status: active
 confidence: high
 content:
   summary: Configuration and path resolution for knowledge storage.
-  details: 'Config resolution priority:\n1. CLI argument `--data-path`\n2. `KNOWLEDGE_MCP_PATH`
-    environment variable\n3. Default: `.knowledge` in current directory\n\nUses `pathlib.Path`
-    for cross-platform path handling. The `Config` class ensures absolute paths are
-    resolved and required directories exist. Uses `index.yaml` for metadata storage.'
+  details: |-
+    Config resolution priority:
+    1. CLI argument `--data-path`
+    2. `KNOWLEDGE_MCP_PATH` environment variable
+    3. Default: `.knowledge` in current directory
+
+    Uses `pathlib.Path` for cross-platform path handling. The `Config` class ensures absolute paths are resolved and required directories exist. Uses `index.yaml` for metadata storage.
   pitfalls:
   - Relative paths are resolved at startup time - changing working directory later
     won't affect stored paths.
@@ -18,9 +21,13 @@ content:
     note: Initial creation
   - date: '2026-01-23'
     note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: python
 created_at: '2026-01-21'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - config
 - path-resolution
@@ -29,8 +36,6 @@ tags:
 sources:
 - kind: repo_path
   ref: src/knowledge_mcp/config.py
-links:
-- rel: see_also
-  id: K-000003
+links: []
 supersedes: []
 superseded_by: null

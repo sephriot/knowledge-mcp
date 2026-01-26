@@ -7,7 +7,8 @@ content:
   summary: The fundamental unit of knowledge storage is the 'Atom' Pydantic model.
   details: Defined in `src/knowledge_mcp/models/atom.py` using Pydantic `BaseModel`.
     Contains ID, title, type, status, confidence, content (summary, details, pitfalls,
-    update_notes), tags, sources, and links. Enums are used for type, status, and confidence.
+    update_notes), tags, sources, and links. Enums are used for type, status, and
+    confidence.
   pitfalls:
   - All atoms must have a valid type from the `AtomType` enum.
   update_notes:
@@ -15,9 +16,13 @@ content:
     note: Initial creation
   - date: '2026-01-23'
     note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: python
 created_at: '2026-01-21'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - data-model
 - atom

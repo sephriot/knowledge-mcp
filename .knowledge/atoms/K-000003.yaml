@@ -18,9 +18,13 @@ content:
     note: Initial creation
   - date: '2026-01-23'
     note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: null
 created_at: '2026-01-21'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - storage
 - architecture

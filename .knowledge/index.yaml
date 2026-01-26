@@ -1,5 +1,5 @@
 version: 1
-updated_at: '2026-01-26T13:53:34.157573+00:00'
+updated_at: '2026-01-26T17:15:04.412907+00:00'
 atoms:
 - id: K-000006
   title: Search Relevance Scoring
@@ -15,8 +15,8 @@ atoms:
   - OR-logic
   - popularity
   path: atoms/K-000006.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - src/knowledge_mcp/tools/search.py
 - id: K-000003
@@ -31,8 +31,8 @@ atoms:
   - yaml
   - json
   path: atoms/K-000003.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 3
   repo_paths:
   - src/knowledge_mcp/storage/atoms.py
   - src/knowledge_mcp/storage/index.py
@@ -48,8 +48,8 @@ atoms:
   - storage
   - python
   path: atoms/K-000009.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - src/knowledge_mcp/config.py
 - id: K-000001
@@ -64,8 +64,8 @@ atoms:
   - knowledge-management
   - fastmcp
   path: atoms/K-000001.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths: []
 - id: K-000008
   title: MCP-Python Library Dependency
@@ -80,8 +80,8 @@ atoms:
   - fastmcp
   - instructions
   path: atoms/K-000008.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - pyproject.toml
   - src/knowledge_mcp/server.py
@@ -97,8 +97,8 @@ atoms:
   - pydantic
   - yaml
   path: atoms/K-000002.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - src/knowledge_mcp/models/atom.py
 - id: K-000004
@@ -113,8 +113,8 @@ atoms:
   - pip
   - install
   path: atoms/K-000004.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - pyproject.toml
   - README.md
@@ -131,8 +131,8 @@ atoms:
   - configuration
   - mcp
   path: atoms/K-000005.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - README.md
 - id: K-000010
@@ -148,8 +148,8 @@ atoms:
   - utility
   - index
   path: atoms/K-000010.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - src/knowledge_mcp/tools/atoms.py
 - id: K-000011
@@ -165,8 +165,8 @@ atoms:
   - enum
   - gotcha
   path: atoms/K-000011.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - src/knowledge_mcp/models/atom.py
 - id: K-000007
@@ -181,10 +181,28 @@ atoms:
   - history
   - go-to-python
   path: atoms/K-000007.yaml
-  updated_at: '2026-01-23'
-  popularity: 0
+  updated_at: '2026-01-26'
+  popularity: 2
   repo_paths:
   - tools/atoms.go
   - tools/upsert.go
   - models/atom.go
   - storage/index.go
+- id: K-000012
+  title: PyYAML Multiline String Formatting
+  type: gotcha
+  status: active
+  confidence: high
+  language: python
+  tags:
+  - yaml
+  - pyyaml
+  - multiline
+  - serialization
+  - gotcha
+  - literal-block
+  path: atoms/K-000012.yaml
+  updated_at: '2026-01-26'
+  popularity: 2
+  repo_paths:
+  - src/knowledge_mcp/storage/atoms.py

@@ -5,16 +5,39 @@ status: active
 confidence: high
 content:
   summary: How to configure AI assistants to use the Python knowledge-mcp server.
-  details: "## Installation\nEnsure the server is installed and available in your\
-    \ PATH:\n```bash\npip install -e .\n```\nOr use `uvx` for ephemeral execution:\n\
-    ```bash\nuvx --from . knowledge-mcp\n```\n\n## Configuration\n\n### Claude Code\n\
-    ```bash\nclaude mcp add knowledge-mcp -- knowledge-mcp\n```\n\n### Gemini CLI\n\
-    Edit `~/.gemini/settings.json`:\n```json\n{\n  \"mcpServers\": {\n    \"knowledge-mcp\"\
-    : {\n      \"command\": \"knowledge-mcp\",\n      \"args\": [\"--data-path\",\
-    \ \"/absolute/path/to/project/.knowledge\"]\n    }\n  }\n}\n```\n\n## System Prompt\
-    \ Integration\nAppend contents of `SYSTEM_PROMPT.md` to your assistant's custom\
-    \ instructions (`~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md`, etc.) to ensure\
-    \ automatic knowledge retrieval and updates."
+  details: |-
+    ## Installation
+    Ensure the server is installed and available in your PATH:
+    ```bash
+    pip install -e .
+    ```
+    Or use `uvx` for ephemeral execution:
+    ```bash
+    uvx --from . knowledge-mcp
+    ```
+
+    ## Configuration
+
+    ### Claude Code
+    ```bash
+    claude mcp add knowledge-mcp -- knowledge-mcp
+    ```
+
+    ### Gemini CLI
+    Edit `~/.gemini/settings.json`:
+    ```json
+    {
+      "mcpServers": {
+        "knowledge-mcp": {
+          "command": "knowledge-mcp",
+          "args": ["--data-path", "/absolute/path/to/project/.knowledge"]
+        }
+      }
+    }
+    ```
+
+    ## System Prompt Integration
+    Append contents of `SYSTEM_PROMPT.md` to your assistant's custom instructions (`~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md`, etc.) to ensure automatic knowledge retrieval and updates.
   pitfalls:
   - Paths to the binary must be absolute or in the system PATH.
   - For project-level config, use relative paths like '.knowledge' for portability.
@@ -25,9 +48,13 @@ content:
     note: Updated
   - date: '2026-01-23'
     note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: null
 created_at: '2026-01-21'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - integration
 - claude

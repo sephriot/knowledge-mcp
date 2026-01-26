@@ -1,0 +1,71 @@
+id: K-000012
+title: PyYAML Multiline String Formatting
+type: gotcha
+status: active
+confidence: high
+content:
+  summary: PyYAML defaults to escaped quotes for multiline strings; use a custom representer
+    for literal block style.
+  details: |-
+    By default, `yaml.dump()` serializes multiline strings using quoted style with escaped newlines (`"line1\nline2"`). This is valid YAML but hard to read and edit.
+
+    **Problem:**
+    ```yaml
+    details: "First line\n\nSecond line\n```code```"
+    ```
+
+    **Solution:**
+    Use a custom representer that applies literal block style (`|`) for strings containing newlines:
+
+    ```python
+    def _multiline_str_representer(dumper: yaml.Dumper, data: str) -> yaml.ScalarNode:
+        if "\n" in data:
+            return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+
+    class _MultilineDumper(yaml.SafeDumper):
+        pass
+
+    _MultilineDumper.add_representer(str, _multiline_str_representer)
+
+    # Usage
+    yaml.dump(data, f, Dumper=_MultilineDumper)
+    ```
+
+    **Result:**
+    ```yaml
+    details: |-
+      First line
+
+      Second line
+      ```code```
+    ```
+
+    The `|-` style preserves newlines literally and strips the final trailing newline.
+  pitfalls:
+  - Ensure the custom Dumper extends SafeDumper (not Dumper) to maintain safe serialization
+  update_notes:
+  - date: '2026-01-26'
+    note: Initial creation
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
+language: python
+created_at: '2026-01-26'
+updated_at: '2026-01-26'
+tags:
+- yaml
+- pyyaml
+- multiline
+- serialization
+- gotcha
+- literal-block
+sources:
+- kind: repo_path
+  ref: src/knowledge_mcp/storage/atoms.py
+links: []
+supersedes: []
+superseded_by: null

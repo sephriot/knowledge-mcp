@@ -5,22 +5,34 @@ status: active
 confidence: high
 content:
   summary: Ensure Enums are serialized as values in YAML to avoid unsafe Python tags.
-  details: "When using Pydantic models with Enums and serializing them to YAML using\
-    \ `yaml.dump(model.model_dump())`, Enums may be serialized as complex Python objects\
-    \ (e.g., `!!python/object/apply:path.to.Enum`) instead of simple strings. This\
-    \ causes `yaml.safe_load()` to fail during deserialization.\n\n**Solution:**\n\
-    Use a base model with `model_config = {\"use_enum_values\": True}` for all models\
-    \ containing Enums. This ensures that `model_dump()` converts Enum members to\
-    \ their underlying values (usually strings) before they reach the YAML dumper.\n\
-    \n```python\nclass BaseAtomModel(BaseModel):\n    model_config = {\"use_enum_values\"\
-    : True}\n\nclass MyModel(BaseAtomModel):\n    status: MyEnum\n```"
+  details: |-
+    When using Pydantic models with Enums and serializing them to YAML using `yaml.dump(model.model_dump())`, Enums may be serialized as complex Python objects (e.g., `!!python/object/apply:path.to.Enum`) instead of simple strings. This causes `yaml.safe_load()` to fail during deserialization.
+
+    **Solution:**
+    Use a base model with `model_config = {"use_enum_values": True}` for all models containing Enums. This ensures that `model_dump()` converts Enum members to their underlying values (usually strings) before they reach the YAML dumper.
+
+    ```python
+    class BaseAtomModel(BaseModel):
+        model_config = {"use_enum_values": True}
+
+    class MyModel(BaseAtomModel):
+        status: MyEnum
+    ```
   pitfalls: []
   update_notes:
   - date: '2026-01-23'
     note: Initial creation
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: python
 created_at: '2026-01-23'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - pydantic
 - yaml

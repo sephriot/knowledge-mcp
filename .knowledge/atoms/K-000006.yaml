@@ -6,77 +6,47 @@ confidence: high
 content:
   summary: Multi-token OR search with cumulative scoring. Query tokens are matched
     independently (OR logic) and scores accumulate.
-  details: '## Scoring Weights (per token match)
-
+  details: |-
+    ## Scoring Weights (per token match)
 
     | Match Type | Score |
-
     |------------|-------|
-
     | Title contains token | +100 |
-
     | Title starts with token | +50 (bonus) |
-
     | Tag contains token | +30 (once per token) |
-
     | Content contains token | +20 (only with `include_content: true`) |
-
 
     ## Priority Boosts (added to matched entries)
 
-
     | Factor | Score |
-
     |--------|-------|
-
     | Status: active | +15, draft | +10, deprecated | +5 |
-
     | Confidence: high | +9, medium | +6, low | +3 |
-
     | Popularity | +0 to +25 (logarithmic, see below) |
-
 
     ## Popularity Scoring
 
-
-    Popularity increments implicitly on each `get_atom` call. Uses log10
-    scaling to handle up to 1M retrievals:
-
+    Popularity increments implicitly on each `get_atom` call. Uses log10 scaling to handle up to 1M retrievals:
 
     | Popularity | Score |
-
     |------------|-------|
-
     | 0 | 0 |
-
     | 10 | 4 |
-
     | 100 | 8 |
-
     | 1,000 | 12 |
-
     | 10,000 | 16 |
-
     | 100,000 | 20 |
-
     | 1,000,000 | 25 (capped) |
-
 
     Formula: `min(25, 25 * log10(popularity + 1) / 6)`
 
-
     ## Behavior
 
-
     - **Empty query**: Returns all atoms with base score 10 + status/confidence boosts
-
     - **Multi-token**: Each token is matched independently; scores accumulate
-
     - **Case-insensitive**: All matching is performed in lowercase
-
     - **Content search**: Only when `include_content: true`; adds +20 per token
-
-    - **Popularity stored in index only**: Not in atom YAML files (performance)'
+    - **Popularity stored in index only**: Not in atom YAML files (performance)
   pitfalls: []
   update_notes:
   - date: '2026-01-21'
@@ -87,9 +57,13 @@ content:
     note: Updated
   - date: '2026-01-26'
     note: Added popularity scoring (logarithmic, max 25 pts)
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: python
 created_at: '2026-01-21'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - search
 - ranking

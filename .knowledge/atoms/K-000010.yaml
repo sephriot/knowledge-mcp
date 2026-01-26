@@ -5,11 +5,10 @@ status: active
 confidence: high
 content:
   summary: Tools for deprecating, purging, and indexing knowledge atoms.
-  details: '- **delete_atom**: Sets status to `deprecated`. Preferred over purging.
-    Implementation: `src/knowledge_mcp/tools/atoms.py`\n- **purge_atom**: Permanently
-    removes the YAML (and legacy JSON) file from disk. Implementation: `src/knowledge_mcp/tools/atoms.py`\n-
-    **rebuild_index**: Regenerates `index.yaml` by reading all atom files in the `.knowledge/atoms`
-    directory. Useful if the index becomes desynchronized. Implementation: `src/knowledge_mcp/tools/atoms.py`'
+  details: |-
+    - **delete_atom**: Sets status to `deprecated`. Preferred over purging. Implementation: `src/knowledge_mcp/tools/atoms.py`
+    - **purge_atom**: Permanently removes the YAML (and legacy JSON) file from disk. Implementation: `src/knowledge_mcp/tools/atoms.py`
+    - **rebuild_index**: Regenerates `index.yaml` by reading all atom files in the `.knowledge/atoms` directory. Useful if the index becomes desynchronized. Implementation: `src/knowledge_mcp/tools/atoms.py`
   pitfalls:
   - purge_atom is irreversible - prefer delete_atom for soft deletion
   - rebuild_index should only be used when index is corrupted or out of sync
@@ -18,9 +17,13 @@ content:
     note: Initial creation
   - date: '2026-01-23'
     note: Updated
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: null
 created_at: '2026-01-21'
-updated_at: '2026-01-23'
+updated_at: '2026-01-26'
 tags:
 - tools
 - purge

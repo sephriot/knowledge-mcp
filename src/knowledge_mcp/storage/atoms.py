@@ -15,6 +15,23 @@ if TYPE_CHECKING:
     pass
 
 
+def _multiline_str_representer(dumper: yaml.Dumper, data: str) -> yaml.ScalarNode:
+    """Represent multiline strings using literal block style (|)."""
+    if "\n" in data:
+        # Use literal block style for multiline strings
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+
+
+class _MultilineDumper(yaml.SafeDumper):
+    """Custom YAML dumper that uses literal block style for multiline strings."""
+
+    pass
+
+
+_MultilineDumper.add_representer(str, _multiline_str_representer)
+
+
 class AtomStorage:
     """Manages atom file storage."""
 
@@ -42,7 +59,14 @@ class AtomStorage:
         # Convert to dict and serialize as YAML
         data = atom.model_dump()
         with open(yaml_path, "w", encoding="utf-8") as f:
-            yaml.dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+            yaml.dump(
+                data,
+                f,
+                Dumper=_MultilineDumper,
+                default_flow_style=False,
+                allow_unicode=True,
+                sort_keys=False,
+            )
 
         # Clean up legacy JSON file if it exists
         if json_path.exists():
