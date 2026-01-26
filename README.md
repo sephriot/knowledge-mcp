@@ -4,130 +4,15 @@ An MCP server providing project-specific knowledge management for coding agents 
 
 **Local-first design**: Each project has its own `.knowledge` directory that can be committed to git.
 
-## Installation
+> **Note**: There is another unrelated project with the same name on PyPI. This project is **not published to PyPI**. Install from GitHub only.
 
-### Using pip
+## Quick Start
 
-```bash
-pip install knowledge-mcp
-```
+The easiest way to use knowledge-mcp is via `uvx` (no installation required).
 
-### Using uv
+### Claude Code
 
-```bash
-uv pip install knowledge-mcp
-```
-
-### Using uvx (no installation)
-
-Run directly without installing:
-
-```bash
-# From PyPI
-uvx knowledge-mcp --data-path .knowledge
-
-# From GitHub
-uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp --data-path .knowledge
-```
-
-### Building from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/sephriot/knowledge-mcp
-cd knowledge-mcp
-
-# Install with pip
-pip install -e .
-
-# Or with uv
-uv pip install -e .
-```
-
-## Usage
-
-### Running the Server
-
-```bash
-# Default: uses .knowledge in current directory
-knowledge-mcp
-
-# Or run as module
-python -m knowledge_mcp
-
-# Custom data path
-knowledge-mcp --data-path /path/to/knowledge
-
-# Or via environment variable
-KNOWLEDGE_MCP_PATH=./my-knowledge knowledge-mcp
-
-# Enable persistent popularity tracking
-knowledge-mcp --persist-popularity
-```
-
-### CLI Options
-
-| Option | Description |
-|--------|-------------|
-| `--data-path PATH` | Path to knowledge storage directory (default: `.knowledge` or `KNOWLEDGE_MCP_PATH` env) |
-| `--persist-popularity` | Persist popularity counts to disk on each atom retrieval |
-
-#### Popularity Tracking
-
-The server tracks how often each atom is retrieved via `get_atom`. This popularity score influences search ranking (more popular atoms rank higher). By default, popularity is tracked in memory only and persists when other index changes occur.
-
-Use `--persist-popularity` to write popularity counts to disk immediately on each retrieval. This is useful when:
-- Running short-lived sessions where in-memory counts would be lost
-- You want guaranteed persistence of usage patterns
-- Multiple server instances share the same storage
-
-Note: Enabling this option increases disk writes. For most use cases, the default behavior is sufficient.
-
-### Adding to Claude Code
-
-#### Option 1: Using the CLI (Recommended)
-
-```bash
-# Add as a global MCP server
-claude mcp add knowledge-mcp -- knowledge-mcp
-
-# Or with a custom data path
-claude mcp add knowledge-mcp -- knowledge-mcp --data-path /path/to/.knowledge
-```
-
-#### Option 2: Project-level configuration
-
-Create or edit `.mcp.json` in your project root:
-
-```json
-{
-  "mcpServers": {
-    "knowledge-mcp": {
-      "command": "knowledge-mcp",
-      "args": ["--data-path", ".knowledge"]
-    }
-  }
-}
-```
-
-#### Option 3: Global configuration
-
-Edit `~/.claude/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "knowledge-mcp": {
-      "command": "knowledge-mcp",
-      "args": []
-    }
-  }
-}
-```
-
-#### Option 4: Using uv from GitHub (no installation required)
-
-Run directly from GitHub without installing:
+Add to your project's `.mcp.json`:
 
 ```json
 {
@@ -146,102 +31,84 @@ Run directly from GitHub without installing:
 }
 ```
 
-Or using `uv run`:
-
-```json
-{
-  "mcpServers": {
-    "knowledge-mcp": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--from",
-        "git+https://github.com/sephriot/knowledge-mcp",
-        "knowledge-mcp",
-        "--data-path",
-        ".knowledge"
-      ]
-    }
-  }
-}
-```
-
-#### Option 5: Using uv from local filesystem
-
-If you have the repository cloned locally:
-
-```json
-{
-  "mcpServers": {
-    "knowledge-mcp": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        "/path/to/knowledge-mcp",
-        "knowledge-mcp",
-        "--data-path",
-        ".knowledge"
-      ]
-    }
-  }
-}
-```
-
-Or install in editable mode and run:
+Or add globally via CLI:
 
 ```bash
-# Install from local directory
-cd /path/to/knowledge-mcp
-uv pip install -e .
-
-# Then use standard configuration
-claude mcp add knowledge-mcp -- knowledge-mcp --data-path .knowledge
+claude mcp add knowledge-mcp -- uvx --from git+https://github.com/sephriot/knowledge-mcp knowledge-mcp
 ```
 
-### Adding to Gemini
-
-Edit `~/.gemini/settings.json`:
-
-```json
-{
-  "mcpServers": {
-    "knowledge-mcp": {
-      "command": "knowledge-mcp",
-      "args": ["--data-path", "/path/to/.knowledge"]
-    }
-  }
-}
-```
-
-Or using uv from GitHub (no installation required):
-
-```json
-{
-  "mcpServers": {
-    "knowledge-mcp": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/sephriot/knowledge-mcp",
-        "knowledge-mcp",
-        "--data-path",
-        "/path/to/.knowledge"
-      ]
-    }
-  }
-}
-```
-
-### Verify Installation
-
-After adding, verify the server is available:
+Verify it works:
 
 ```bash
 claude mcp list
 ```
 
-You should see `knowledge-mcp` in the list of available MCP servers.
+### Gemini
+
+Add to `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "knowledge-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/sephriot/knowledge-mcp",
+        "knowledge-mcp",
+        "--data-path",
+        ".knowledge"
+      ]
+    }
+  }
+}
+```
+
+## Alternative Installation
+
+If you prefer to install locally instead of using uvx:
+
+```bash
+# Clone and install
+git clone https://github.com/sephriot/knowledge-mcp
+cd knowledge-mcp
+pip install -e .
+
+# Then configure your MCP client to use the installed command
+claude mcp add knowledge-mcp -- knowledge-mcp --data-path .knowledge
+```
+
+## CLI Options
+
+| Option                 | Description                                                                            |
+|------------------------|----------------------------------------------------------------------------------------|
+| `--data-path PATH`     | Path to knowledge storage directory (default: `.knowledge` or `KNOWLEDGE_MCP_PATH` env)|
+| `--persist-popularity` | Persist popularity counts to disk on each atom retrieval                               |
+
+### Running Standalone
+
+```bash
+# Default: uses .knowledge in current directory
+knowledge-mcp
+
+# Custom data path
+knowledge-mcp --data-path /path/to/knowledge
+
+# Via environment variable
+KNOWLEDGE_MCP_PATH=./my-knowledge knowledge-mcp
+```
+
+### Popularity Tracking
+
+The server tracks how often each atom is retrieved via `get_atom`. This popularity score influences search ranking (more popular atoms rank higher). By default, popularity is tracked in memory only and persists when other index changes occur.
+
+Use `--persist-popularity` to write popularity counts to disk immediately on each retrieval. This is useful when:
+
+- Running short-lived sessions where in-memory counts would be lost
+- You want guaranteed persistence of usage patterns
+- Multiple server instances share the same storage
+
+Note: Enabling this option increases disk writes. For most use cases, the default behavior is sufficient.
 
 ## Storage Structure
 
