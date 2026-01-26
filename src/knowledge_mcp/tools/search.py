@@ -57,7 +57,7 @@ class SearchEngine:
 
     def search(
         self,
-        query: list[str],
+        query: str | list[str] | None,
         types: list[str] | None,
         tags: list[str] | None,
         language: str | None,
@@ -68,7 +68,8 @@ class SearchEngine:
         """Search for knowledge atoms.
 
         Args:
-            query: Search tokens (OR logic with cumulative scoring)
+            query: Search string or tokens (OR logic with cumulative scoring).
+                   Strings are tokenized by whitespace.
             types: Filter by atom types
             tags: Filter by tags (case-insensitive)
             language: Filter by programming language
@@ -80,7 +81,7 @@ class SearchEngine:
             List of search results with scores
         """
         index = self.index_manager.get_index()
-        query_tokens = self._normalize_tokens(query)
+        query_tokens = self._tokenize_query(query)
 
         # Convert types to set for fast lookup
         type_set = set(types) if types else set()
@@ -118,8 +119,18 @@ class SearchEngine:
         # Format results
         return [self._format_result(entry, score) for entry, score in scored_results]
 
-    def _normalize_tokens(self, tokens: list[str]) -> list[str]:
-        """Convert query tokens to lowercase for case-insensitive matching."""
+    def _tokenize_query(self, query: str | list[str] | None) -> list[str]:
+        """Convert query to normalized token list.
+
+        Accepts string (tokenized by whitespace) or list of tokens.
+        Returns lowercase tokens for case-insensitive matching.
+        """
+        if query is None:
+            return []
+        if isinstance(query, str):
+            tokens = query.split()
+        else:
+            tokens = query
         return [t.lower() for t in tokens if t]
 
     def _calculate_score(self, entry: IndexEntry, query_tokens: list[str]) -> int:

@@ -39,7 +39,8 @@ This investment pays off: future tasks in this project will be faster because yo
 - snippet: Reusable code fragments
 
 ## Search Behavior
-- Query is a LIST of tokens: `query: ["error", "handling"]` (not a string)
+- Query accepts string or array: `query: "error handling"` or `query: ["error", "handling"]`
+- Strings are automatically tokenized by whitespace
 - Uses OR logic: any matching token scores points
 - More matches = higher score (cumulative)
 - Use include_content=true for thorough searches
@@ -98,7 +99,7 @@ def _register_search_tool(mcp: FastMCP, engine: SearchEngine) -> None:
 
     @mcp.tool()
     def search(
-        query: list[str] | None = None,
+        query: str | list[str] | None = None,
         types: list[str] | None = None,
         tags: list[str] | None = None,
         language: str | None = None,
@@ -109,7 +110,8 @@ def _register_search_tool(mcp: FastMCP, engine: SearchEngine) -> None:
         """Search knowledge atoms by title, tags, and content.
 
         Args:
-            query: Search query tokens. Results match if ANY token is found (OR logic). More matches = higher score.
+            query: Search query as string or token list. Strings are split by whitespace.
+                   Results match if ANY token is found (OR logic). More matches = higher score.
             types: Filter by types (fact, decision, procedure, pattern, gotcha, glossary, snippet).
             tags: Filter by tags.
             language: Filter by programming language.
@@ -121,7 +123,7 @@ def _register_search_tool(mcp: FastMCP, engine: SearchEngine) -> None:
             List of matching atoms with metadata and summary.
         """
         return engine.search(
-            query=query or [],
+            query=query,
             types=types,
             tags=tags,
             language=language,
