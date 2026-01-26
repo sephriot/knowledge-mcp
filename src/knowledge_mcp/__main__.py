@@ -2,7 +2,7 @@
 
 import argparse
 
-from .server import create_server
+from knowledge_mcp.server import create_server
 
 
 def main() -> None:

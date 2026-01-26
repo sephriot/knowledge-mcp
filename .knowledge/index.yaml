@@ -1,35 +1,24 @@
 version: 1
-updated_at: '2026-01-23T19:14:47.593689+00:00'
+updated_at: '2026-01-26T13:53:34.157573+00:00'
 atoms:
-- id: K-000010
-  title: Destructive and Utility Tools
-  type: fact
-  status: active
-  confidence: high
-  language: null
-  tags:
-  - tools
-  - purge
-  - delete
-  - utility
-  - index
-  path: atoms/K-000010.yaml
-  updated_at: '2026-01-23'
-  popularity: 1
-- id: K-000002
-  title: Knowledge Atom Data Model
+- id: K-000006
+  title: Search Relevance Scoring
   type: pattern
   status: active
   confidence: high
   language: python
   tags:
-  - data-model
-  - atom
-  - pydantic
-  - yaml
-  path: atoms/K-000002.yaml
+  - search
+  - ranking
+  - algorithm
+  - multi-token
+  - OR-logic
+  - popularity
+  path: atoms/K-000006.yaml
   updated_at: '2026-01-23'
-  popularity: 2
+  popularity: 0
+  repo_paths:
+  - src/knowledge_mcp/tools/search.py
 - id: K-000003
   title: YAML-based Storage Architecture
   type: decision
@@ -43,37 +32,41 @@ atoms:
   - json
   path: atoms/K-000003.yaml
   updated_at: '2026-01-23'
-  popularity: 2
-- id: K-000005
-  title: Integrating with AI Assistants
-  type: procedure
-  status: active
-  confidence: high
-  language: null
-  tags:
-  - integration
-  - claude
-  - gemini
-  - configuration
-  - mcp
-  path: atoms/K-000005.yaml
-  updated_at: '2026-01-23'
-  popularity: 2
-- id: K-000006
-  title: Search Relevance Scoring
+  popularity: 0
+  repo_paths:
+  - src/knowledge_mcp/storage/atoms.py
+  - src/knowledge_mcp/storage/index.py
+- id: K-000009
+  title: Config Package - Path Resolution
   type: pattern
   status: active
   confidence: high
   language: python
   tags:
-  - search
-  - ranking
-  - algorithm
-  - multi-token
-  - OR-logic
-  path: atoms/K-000006.yaml
+  - config
+  - path-resolution
+  - storage
+  - python
+  path: atoms/K-000009.yaml
   updated_at: '2026-01-23'
-  popularity: 2
+  popularity: 0
+  repo_paths:
+  - src/knowledge_mcp/config.py
+- id: K-000001
+  title: Knowledge MCP Server Overview
+  type: fact
+  status: active
+  confidence: high
+  language: null
+  tags:
+  - mcp
+  - python
+  - knowledge-management
+  - fastmcp
+  path: atoms/K-000001.yaml
+  updated_at: '2026-01-23'
+  popularity: 0
+  repo_paths: []
 - id: K-000008
   title: MCP-Python Library Dependency
   type: fact
@@ -88,35 +81,26 @@ atoms:
   - instructions
   path: atoms/K-000008.yaml
   updated_at: '2026-01-23'
-  popularity: 1
-- id: K-000009
-  title: Config Package - Path Resolution
+  popularity: 0
+  repo_paths:
+  - pyproject.toml
+  - src/knowledge_mcp/server.py
+- id: K-000002
+  title: Knowledge Atom Data Model
   type: pattern
   status: active
   confidence: high
   language: python
   tags:
-  - config
-  - path-resolution
-  - storage
-  - python
-  path: atoms/K-000009.yaml
+  - data-model
+  - atom
+  - pydantic
+  - yaml
+  path: atoms/K-000002.yaml
   updated_at: '2026-01-23'
-  popularity: 1
-- id: K-000001
-  title: Knowledge MCP Server Overview
-  type: fact
-  status: active
-  confidence: high
-  language: null
-  tags:
-  - mcp
-  - python
-  - knowledge-management
-  - fastmcp
-  path: atoms/K-000001.yaml
-  updated_at: '2026-01-23'
-  popularity: 2
+  popularity: 0
+  repo_paths:
+  - src/knowledge_mcp/models/atom.py
 - id: K-000004
   title: Building Knowledge MCP
   type: procedure
@@ -130,21 +114,44 @@ atoms:
   - install
   path: atoms/K-000004.yaml
   updated_at: '2026-01-23'
-  popularity: 2
-- id: K-000007
-  title: Historical Bug Fixes (Go Implementation)
+  popularity: 0
+  repo_paths:
+  - pyproject.toml
+  - README.md
+- id: K-000005
+  title: Integrating with AI Assistants
+  type: procedure
+  status: active
+  confidence: high
+  language: null
+  tags:
+  - integration
+  - claude
+  - gemini
+  - configuration
+  - mcp
+  path: atoms/K-000005.yaml
+  updated_at: '2026-01-23'
+  popularity: 0
+  repo_paths:
+  - README.md
+- id: K-000010
+  title: Destructive and Utility Tools
   type: fact
   status: active
   confidence: high
   language: null
   tags:
-  - knowledge-mcp
-  - bugfix
-  - history
-  - go-to-python
-  path: atoms/K-000007.yaml
+  - tools
+  - purge
+  - delete
+  - utility
+  - index
+  path: atoms/K-000010.yaml
   updated_at: '2026-01-23'
   popularity: 0
+  repo_paths:
+  - src/knowledge_mcp/tools/atoms.py
 - id: K-000011
   title: Pydantic Enum Serialization in YAML
   type: gotcha
@@ -159,4 +166,25 @@ atoms:
   - gotcha
   path: atoms/K-000011.yaml
   updated_at: '2026-01-23'
-  popularity: 1
+  popularity: 0
+  repo_paths:
+  - src/knowledge_mcp/models/atom.py
+- id: K-000007
+  title: Historical Bug Fixes (Go Implementation)
+  type: fact
+  status: active
+  confidence: high
+  language: null
+  tags:
+  - knowledge-mcp
+  - bugfix
+  - history
+  - go-to-python
+  path: atoms/K-000007.yaml
+  updated_at: '2026-01-23'
+  popularity: 0
+  repo_paths:
+  - tools/atoms.go
+  - tools/upsert.go
+  - models/atom.go
+  - storage/index.go
