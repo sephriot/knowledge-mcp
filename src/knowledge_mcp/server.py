@@ -45,6 +45,8 @@ This investment pays off: future tasks in this project will be faster because yo
 - More matches = higher score (cumulative)
 - Use include_content=true for thorough searches
 - Filter by type/tags/language to narrow results
+- Use file_path to find atoms related to a specific file (searches repo_path sources)
+  - Accepts string or array: `file_path: "src/foo.py"` or `file_path: ["src/a.py", "src/b.py"]`
 
 ## Best Practices
 1. Search BEFORE creating to avoid duplicates
@@ -106,6 +108,7 @@ def _register_search_tool(mcp: FastMCP, engine: SearchEngine) -> None:
         status: str | None = None,
         limit: int = 10,
         include_content: bool = False,
+        file_path: str | list[str] | None = None,
     ) -> list[dict[str, Any]]:
         """Search knowledge atoms by title, tags, and content.
 
@@ -118,6 +121,9 @@ def _register_search_tool(mcp: FastMCP, engine: SearchEngine) -> None:
             status: Filter by status (active, draft, deprecated).
             limit: Maximum results (default 10).
             include_content: Search in atom content (summary, details) too. Slower but more thorough.
+            file_path: Search by file path(s). Accepts string or list of strings.
+                       Matches atoms with repo_path sources. Best score from any path is used.
+                       Exact match scores highest, parent directory match scores medium.
 
         Returns:
             List of matching atoms with metadata and summary.
@@ -130,6 +136,7 @@ def _register_search_tool(mcp: FastMCP, engine: SearchEngine) -> None:
             status=status,
             limit=limit,
             include_content=include_content,
+            file_path=file_path,
         )
 
 

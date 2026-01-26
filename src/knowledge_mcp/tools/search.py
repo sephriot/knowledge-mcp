@@ -64,6 +64,7 @@ class SearchEngine:
         status: str | None,
         limit: int,
         include_content: bool = False,
+        file_path: str | list[str] | None = None,
     ) -> list[dict[str, Any]]:
         """Search for knowledge atoms.
 
@@ -76,6 +77,10 @@ class SearchEngine:
             status: Filter by status
             limit: Maximum results
             include_content: Also search in atom content (slower)
+            file_path: Search by file path(s) (matches atoms with repo_path sources).
+                       Accepts string or list of strings. Best score from any path is used.
+                       Supports hierarchical matching: exact match scores highest,
+                       parent directory match scores medium.
 
         Returns:
             List of search results with scores
@@ -106,6 +111,11 @@ class SearchEngine:
                 score = self._calculate_content_score(entry, query_tokens)
             else:
                 score = self._calculate_score(entry, query_tokens)
+
+            # Add file path score (OR logic - combined scoring)
+            if file_path:
+                path_score = self._calculate_path_score(entry, file_path)
+                score += path_score
 
             if score > 0:
                 scored_results.append((entry, score))
@@ -198,6 +208,56 @@ class SearchEngine:
                         score += 20
 
         return score
+
+    def _calculate_path_score(
+        self, entry: IndexEntry, query_paths: str | list[str]
+    ) -> int:
+        """Calculate score based on file path matching.
+
+        Supports hierarchical matching with scoring:
+        - Exact match: +100 points
+        - repo_path is parent of query: +50 (decays with depth difference, min 20)
+        - query is parent of repo_path: +30 (less specific match)
+
+        Args:
+            entry: Index entry with repo_paths field
+            query_paths: File path(s) to search for (string or list)
+
+        Returns:
+            Best matching score (0 if no match)
+        """
+        if not entry.repo_paths:
+            return 0
+
+        # Normalize to list
+        if isinstance(query_paths, str):
+            paths_to_check = [query_paths]
+        else:
+            paths_to_check = query_paths
+
+        best_score = 0
+
+        for query_path in paths_to_check:
+            query_normalized = query_path.strip("/")
+
+            for repo_path in entry.repo_paths:
+                path_normalized = repo_path.strip("/")
+
+                if query_normalized == path_normalized:
+                    # Exact match - highest score
+                    return 100
+
+                if query_normalized.startswith(path_normalized + "/"):
+                    # repo_path is parent of query (e.g., "src/foo" matches query "src/foo/bar.py")
+                    depth_diff = query_normalized.count("/") - path_normalized.count("/")
+                    score = max(50 - (depth_diff - 1) * 10, 20)  # Decay with depth, min 20
+                    best_score = max(best_score, score)
+
+                elif path_normalized.startswith(query_normalized + "/"):
+                    # query is parent of repo_path (less specific match)
+                    best_score = max(best_score, 30)
+
+        return best_score
 
     def _format_result(self, entry: IndexEntry, score: int) -> dict[str, Any]:
         """Format a search result."""

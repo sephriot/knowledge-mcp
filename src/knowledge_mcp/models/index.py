@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
-from .enums import AtomStatus, AtomType, Confidence
+from .enums import AtomStatus, AtomType, Confidence, SourceKind
 
 if TYPE_CHECKING:
     from .atom import Atom
@@ -26,12 +26,16 @@ class IndexEntry(BaseModel):
     path: str
     updated_at: str
     popularity: int = 0  # Implicit retrieval counter
+    repo_paths: list[str] = Field(default_factory=list)  # Indexed repo_path sources
 
     model_config = {"use_enum_values": True}
 
     @classmethod
     def from_atom(cls, atom: Atom) -> IndexEntry:
         """Create an index entry from an atom."""
+        repo_paths = [
+            s.ref for s in atom.sources if s.kind == SourceKind.REPO_PATH.value
+        ]
         return cls(
             id=atom.id,
             title=atom.title,
@@ -42,6 +46,7 @@ class IndexEntry(BaseModel):
             tags=atom.tags,
             path=f"atoms/{atom.id}.yaml",
             updated_at=atom.updated_at,
+            repo_paths=repo_paths,
         )
 
 
