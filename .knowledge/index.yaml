@@ -1,5 +1,5 @@
 version: 1
-updated_at: '2026-01-26T17:45:53.611149+00:00'
+updated_at: '2026-01-26T17:56:45.046296+00:00'
 atoms:
 - id: K-000001
   title: Knowledge MCP Server Overview
@@ -240,9 +240,6 @@ atoms:
   - tool-agnostic
   path: atoms/K-000014.yaml
   updated_at: '2026-01-26'
-  popularity: 2
+  popularity: 3
   repo_paths:
   - SYSTEM_PROMPT.md
-  - CLAUDE.md
-  - GEMINI.md
-  - CODEX.md

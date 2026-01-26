@@ -28,6 +28,8 @@ content:
     note: Updated
   - date: '2026-01-26'
     note: Updated
+  - date: '2026-01-26'
+    note: Updated
 language: null
 created_at: '2026-01-26'
 updated_at: '2026-01-26'
@@ -43,12 +45,6 @@ tags:
 sources:
 - kind: repo_path
   ref: SYSTEM_PROMPT.md
-- kind: repo_path
-  ref: CLAUDE.md
-- kind: repo_path
-  ref: GEMINI.md
-- kind: repo_path
-  ref: CODEX.md
 links: []
 supersedes: []
 superseded_by: null
