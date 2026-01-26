@@ -351,6 +351,32 @@ Use `include_content: true` to search within atom content (summary and details),
 }
 ```
 
+### File Path Search
+
+Use `file_path` to find atoms related to specific files. Supports hierarchical matching:
+
+```json
+{
+  "tool": "search",
+  "arguments": {
+    "file_path": "src/utils/errors.ts"
+  }
+}
+```
+
+Or search multiple files:
+
+```json
+{
+  "tool": "search",
+  "arguments": {
+    "file_path": ["src/api/client.ts", "src/api/server.ts"]
+  }
+}
+```
+
+Scoring: exact match (+100) > parent directory (+50 decaying) > child match (+30).
+
 ## Atom Fields Reference
 
 | Field          | Required | Description                                                                 |

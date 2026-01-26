@@ -73,6 +73,7 @@ Conclude with the required sections:
 
 ==================== TIPS ====================
 - Use `include_content: true` in search for thorough content matching
+- Use `file_path` to find atoms related to specific files (e.g., `file_path: "src/foo.ts"` or array)
 - Provide `id` to upsert for updates (preserves created_at timestamp)
 - Link related atoms using the `links` field for better discoverability
 
