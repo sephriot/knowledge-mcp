@@ -39,6 +39,7 @@ This investment pays off: future tasks in this project will be faster because yo
 - snippet: Reusable code fragments
 
 ## Search Behavior
+- Query is a LIST of tokens: `query: ["error", "handling"]` (not a string)
 - Uses OR logic: any matching token scores points
 - More matches = higher score (cumulative)
 - Use include_content=true for thorough searches

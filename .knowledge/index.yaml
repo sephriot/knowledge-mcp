@@ -15,6 +15,7 @@ atoms:
   - index
   path: atoms/K-000010.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000002
   title: Knowledge Atom Data Model
   type: pattern
@@ -28,6 +29,7 @@ atoms:
   - yaml
   path: atoms/K-000002.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000003
   title: YAML-based Storage Architecture
   type: decision
@@ -41,6 +43,7 @@ atoms:
   - json
   path: atoms/K-000003.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000005
   title: Integrating with AI Assistants
   type: procedure
@@ -55,6 +58,7 @@ atoms:
   - mcp
   path: atoms/K-000005.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000006
   title: Search Relevance Scoring
   type: pattern
@@ -69,6 +73,7 @@ atoms:
   - OR-logic
   path: atoms/K-000006.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000008
   title: MCP-Python Library Dependency
   type: fact
@@ -83,6 +88,7 @@ atoms:
   - instructions
   path: atoms/K-000008.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000009
   title: Config Package - Path Resolution
   type: pattern
@@ -96,6 +102,7 @@ atoms:
   - python
   path: atoms/K-000009.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000001
   title: Knowledge MCP Server Overview
   type: fact
@@ -109,6 +116,7 @@ atoms:
   - fastmcp
   path: atoms/K-000001.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000004
   title: Building Knowledge MCP
   type: procedure
@@ -122,6 +130,7 @@ atoms:
   - install
   path: atoms/K-000004.yaml
   updated_at: '2026-01-23'
+  popularity: 1
 - id: K-000007
   title: Historical Bug Fixes (Go Implementation)
   type: fact
@@ -135,6 +144,7 @@ atoms:
   - go-to-python
   path: atoms/K-000007.yaml
   updated_at: '2026-01-23'
+  popularity: 0
 - id: K-000011
   title: Pydantic Enum Serialization in YAML
   type: gotcha
@@ -149,3 +159,4 @@ atoms:
   - gotcha
   path: atoms/K-000011.yaml
   updated_at: '2026-01-23'
+  popularity: 1
