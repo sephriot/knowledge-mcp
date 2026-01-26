@@ -27,12 +27,10 @@ tags:
 - storage
 - python
 sources:
-- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
-  - repo_path
+- kind: repo_path
   ref: src/knowledge_mcp/config.py
 links:
-- rel: !!python/object/apply:knowledge_mcp.models.enums.LinkRel
-  - see_also
+- rel: see_also
   id: K-000003
 supersedes: []
 superseded_by: null

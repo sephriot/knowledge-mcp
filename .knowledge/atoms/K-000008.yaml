@@ -31,11 +31,9 @@ tags:
 - fastmcp
 - instructions
 sources:
-- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
-  - repo_path
+- kind: repo_path
   ref: pyproject.toml
-- kind: !!python/object/apply:knowledge_mcp.models.enums.SourceKind
-  - repo_path
+- kind: repo_path
   ref: src/knowledge_mcp/server.py
 links: []
 supersedes: []
