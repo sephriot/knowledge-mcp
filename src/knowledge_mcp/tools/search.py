@@ -28,17 +28,18 @@ CONFIDENCE_PRIORITY: dict[str, int] = {
 def _popularity_score(popularity: int) -> int:
     """Calculate popularity bonus (logarithmic, max 25 points).
 
-    Uses log2 scaling to provide diminishing returns:
-    - popularity=0  ->  0 pts
-    - popularity=1  ->  5 pts
-    - popularity=3  -> 10 pts
-    - popularity=7  -> 15 pts
-    - popularity=15 -> 20 pts
-    - popularity=31 -> 25 pts (capped)
+    Uses log10 scaling to handle up to 1,000,000 retrievals:
+    - popularity=0       ->  0 pts
+    - popularity=10      ->  4 pts
+    - popularity=100     ->  8 pts
+    - popularity=1000    -> 12 pts
+    - popularity=10000   -> 16 pts
+    - popularity=100000  -> 20 pts
+    - popularity=1000000 -> 25 pts (capped)
     """
     if popularity <= 0:
         return 0
-    return min(25, int(5 * math.log2(popularity + 1)))
+    return min(25, int(25 * math.log10(popularity + 1) / 6))
 
 
 class SearchEngine:
