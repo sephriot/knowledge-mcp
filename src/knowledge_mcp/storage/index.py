@@ -103,6 +103,24 @@ class IndexManager:
             assert self._index is not None
             return self._index.find_by_id(atom_id)
 
+    def increment_popularity(self, atom_id: str) -> bool:
+        """Increment popularity counter for an atom (thread-safe, in-memory).
+
+        Args:
+            atom_id: The atom ID to increment popularity for
+
+        Returns:
+            True if atom was found and incremented, False otherwise
+        """
+        with self._lock:
+            self._load_locked()
+            assert self._index is not None
+            entry = self._index.find_by_id(atom_id)
+            if entry is None:
+                return False
+            entry.popularity += 1
+            return True
+
     def get_next_id(self) -> str:
         """Get the next available atom ID."""
         with self._lock:

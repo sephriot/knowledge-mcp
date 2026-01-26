@@ -70,6 +70,10 @@ class AtomTools:
         atom = self.atom_storage.load(id)
         if atom is None:
             return None
+
+        # Increment popularity (implicit tracking)
+        self.index_manager.increment_popularity(id)
+
         return _atom_to_map(atom)
 
     def list_atoms(

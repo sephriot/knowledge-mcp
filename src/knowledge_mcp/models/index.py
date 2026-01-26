@@ -25,6 +25,7 @@ class IndexEntry(BaseModel):
     tags: list[str] = Field(default_factory=list)
     path: str
     updated_at: str
+    popularity: int = 0  # Implicit retrieval counter
 
     model_config = {"use_enum_values": True}
 
@@ -64,6 +65,7 @@ class Index(BaseModel):
         """Add or update an entry in the index."""
         for i, existing in enumerate(self.atoms):
             if existing.id == entry.id:
+                entry.popularity = existing.popularity  # Preserve popularity
                 self.atoms[i] = entry
                 self.updated_at = datetime.now(timezone.utc).isoformat()
                 return

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 from ..config import Config, get_config
@@ -22,6 +23,22 @@ CONFIDENCE_PRIORITY: dict[str, int] = {
     Confidence.MEDIUM.value: 2,
     Confidence.LOW.value: 1,
 }
+
+
+def _popularity_score(popularity: int) -> int:
+    """Calculate popularity bonus (logarithmic, max 25 points).
+
+    Uses log2 scaling to provide diminishing returns:
+    - popularity=0  ->  0 pts
+    - popularity=1  ->  5 pts
+    - popularity=3  -> 10 pts
+    - popularity=7  -> 15 pts
+    - popularity=15 -> 20 pts
+    - popularity=31 -> 25 pts (capped)
+    """
+    if popularity <= 0:
+        return 0
+    return min(25, int(5 * math.log2(popularity + 1)))
 
 
 class SearchEngine:
@@ -137,6 +154,7 @@ class SearchEngine:
         # Add status and confidence priority for matched entries
         match_score += STATUS_PRIORITY.get(entry.status, 0) * 5
         match_score += CONFIDENCE_PRIORITY.get(entry.confidence, 0) * 3
+        match_score += _popularity_score(entry.popularity)
 
         return match_score
 
@@ -163,6 +181,7 @@ class SearchEngine:
                         score = 20
                         score += STATUS_PRIORITY.get(entry.status, 0) * 5
                         score += CONFIDENCE_PRIORITY.get(entry.confidence, 0) * 3
+                        score += _popularity_score(entry.popularity)
                     else:
                         score += 20
 
