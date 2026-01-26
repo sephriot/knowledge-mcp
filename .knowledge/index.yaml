@@ -29,7 +29,7 @@ atoms:
   - yaml
   path: atoms/K-000002.yaml
   updated_at: '2026-01-23'
-  popularity: 1
+  popularity: 2
 - id: K-000003
   title: YAML-based Storage Architecture
   type: decision
@@ -43,7 +43,7 @@ atoms:
   - json
   path: atoms/K-000003.yaml
   updated_at: '2026-01-23'
-  popularity: 1
+  popularity: 2
 - id: K-000005
   title: Integrating with AI Assistants
   type: procedure
@@ -58,7 +58,7 @@ atoms:
   - mcp
   path: atoms/K-000005.yaml
   updated_at: '2026-01-23'
-  popularity: 1
+  popularity: 2
 - id: K-000006
   title: Search Relevance Scoring
   type: pattern
@@ -73,7 +73,7 @@ atoms:
   - OR-logic
   path: atoms/K-000006.yaml
   updated_at: '2026-01-23'
-  popularity: 1
+  popularity: 2
 - id: K-000008
   title: MCP-Python Library Dependency
   type: fact
@@ -116,7 +116,7 @@ atoms:
   - fastmcp
   path: atoms/K-000001.yaml
   updated_at: '2026-01-23'
-  popularity: 1
+  popularity: 2
 - id: K-000004
   title: Building Knowledge MCP
   type: procedure
@@ -130,7 +130,7 @@ atoms:
   - install
   path: atoms/K-000004.yaml
   updated_at: '2026-01-23'
-  popularity: 1
+  popularity: 2
 - id: K-000007
   title: Historical Bug Fixes (Go Implementation)
   type: fact
