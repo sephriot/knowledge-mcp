@@ -1,0 +1,54 @@
+id: K-000014
+title: Knowledge-First Agent Protocol (System Prompt)
+type: pattern
+status: active
+confidence: high
+content:
+  summary: The canonical tool-agnostic system prompt for AI agents enforcing proactive
+    knowledge retrieval and updates via LTM (Long-Term Memory).
+  details: |-
+    The protocol instructs AI agents (Codex, Claude, Gemini) to treat the LTM (Long-Term Memory) system as their primary source of truth. It defines a 4-phase mandatory workflow:
+
+    1. RETRIEVE - Search LTM before planning, extract keywords, read full entries, ground decisions in knowledge
+    2. APPLY - Follow retrieved patterns strictly, cite sources, re-search on subtasks/uncertainty/file changes
+    3. UPDATE - Reflect on novel problems/patterns/gotchas/decisions, create or update entries in LTM
+    4. FINALIZE - Conclude with 'Knowledge Used' and 'Knowledge Changes' sections
+
+    Key principles:
+    - LTM is primary source of truth over generic training data
+    - Failure to retrieve is a critical error
+    - Failure to capture is a waste of resources
+    - Conflict resolution: confidence > status > recency
+    - Task completion remains priority (knowledge must not delay progress)
+  pitfalls: []
+  update_notes:
+  - date: '2026-01-26'
+    note: Initial creation
+  - date: '2026-01-26'
+    note: Updated
+  - date: '2026-01-26'
+    note: Updated
+language: null
+created_at: '2026-01-26'
+updated_at: '2026-01-26'
+tags:
+- system-prompt
+- workflow
+- protocol
+- claude
+- gemini
+- codex
+- ltm
+- tool-agnostic
+sources:
+- kind: repo_path
+  ref: SYSTEM_PROMPT.md
+- kind: repo_path
+  ref: CLAUDE.md
+- kind: repo_path
+  ref: GEMINI.md
+- kind: repo_path
+  ref: CODEX.md
+links: []
+supersedes: []
+superseded_by: null
