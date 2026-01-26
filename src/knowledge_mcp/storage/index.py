@@ -63,7 +63,10 @@ class IndexManager:
         index_path = self.config.index_path
         index_path_json = self.config.index_path_json
 
-        data = self._index.model_dump()
+        # Sort atoms by ID for deterministic output
+        sorted_index = self._index.model_copy()
+        sorted_index.atoms = sorted(sorted_index.atoms, key=lambda e: e.id)
+        data = sorted_index.model_dump()
         with open(index_path, "w", encoding="utf-8") as f:
             yaml.dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
 

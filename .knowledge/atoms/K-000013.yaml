@@ -1,0 +1,36 @@
+id: K-000013
+title: MCP Server Code Changes Require Restart
+type: gotcha
+status: active
+confidence: high
+content:
+  summary: When modifying MCP server source code, the running server process retains
+    old code in memory. Changes won't take effect until the server is restarted or
+    you test by running Python directly.
+  details: |-
+    During development, if you edit source files and then call MCP tools, the running server still uses the old code.
+
+    **Solutions:**
+    1. Restart the MCP server process
+    2. Test directly via venv: `.venv/bin/python -c "from module import func; func()"`
+
+    The second approach is faster for quick iteration during development.
+  pitfalls: []
+  update_notes:
+  - date: '2026-01-26'
+    note: Initial creation
+language: python
+created_at: '2026-01-26'
+updated_at: '2026-01-26'
+tags:
+- mcp
+- development
+- testing
+- gotcha
+- hot-reload
+sources:
+- kind: repo_path
+  ref: src/knowledge_mcp/storage/index.py
+links: []
+supersedes: []
+superseded_by: null
