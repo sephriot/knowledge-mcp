@@ -16,27 +16,16 @@ from .tools.upsert import UpsertHandler
 SERVER_INSTRUCTIONS = """Knowledge MCP - Project-specific knowledge management for AI agents.
 
 ## Purpose
-Store and retrieve reusable knowledge to accelerate future tasks. Knowledge persists across conversations, making repeated work faster and more consistent.
+Store and retrieve reusable knowledge to accelerate future tasks.
 
-## PROACTIVE KNOWLEDGE CREATION (IMPORTANT)
-You are strongly encouraged to CREATE knowledge atoms proactively during your work:
-
-- After solving a non-trivial problem -> create a "pattern" or "procedure" atom
-- After discovering a gotcha or pitfall -> create a "gotcha" atom
-- After making an architectural decision -> create a "decision" atom
-- After learning how something works -> create a "fact" atom
-- After writing reusable code -> create a "snippet" atom
-
-This investment pays off: future tasks in this project will be faster because you'll have context ready. Don't wait to be asked - if knowledge is reusable, capture it.
-
-## Atom Types
-- fact: Verified information about the codebase, APIs, or domain
-- decision: Architectural or design decisions with rationale
-- procedure: Step-by-step instructions for tasks
-- pattern: Reusable solutions or code patterns
-- gotcha: Pitfalls, common mistakes, or non-obvious behavior
-- glossary: Domain-specific terms and definitions
-- snippet: Reusable code fragments
+## PROACTIVE KNOWLEDGE CREATION
+Create knowledge atoms proactively. Don't wait to be asked.
+- **pattern/procedure**: After solving a non-trivial problem.
+- **gotcha**: After discovering a pitfall or non-obvious behavior.
+- **decision**: After making an architectural choice (include rationale).
+- **fact**: After learning verified info about the codebase/domain.
+- **snippet**: After writing reusable code.
+- **glossary**: For domain-specific terms.
 
 ## Search Parameters & Behavior
 - **query** (string | list): Primary search terms.
