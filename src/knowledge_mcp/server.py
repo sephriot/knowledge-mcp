@@ -143,15 +143,15 @@ def _register_upsert_tool(mcp: FastMCP, handler: UpsertHandler) -> None:
     def upsert(
         title: str,
         type: str,
-        status: str,
-        confidence: str,
         summary: str,
+        status: str = "active",
+        confidence: str = "medium",
         details: str | None = None,
         pitfalls: list[str] | None = None,
         id: str | None = None,
         language: str | None = None,
         tags: list[str] | None = None,
-        sources: list[dict[str, str]] | None = None,
+        sources: list[dict[str, str] | str] | None = None,
         links: list[dict[str, str]] | None = None,
     ) -> dict[str, Any]:
         """Create or update a knowledge atom.

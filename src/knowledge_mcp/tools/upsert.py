@@ -62,15 +62,15 @@ class UpsertHandler:
         self,
         title: str,
         type: str,
-        status: str,
-        confidence: str,
         summary: str,
+        status: str = "active",
+        confidence: str = "medium",
         details: str | None = None,
         pitfalls: list[str] | None = None,
         id: str | None = None,
         language: str | None = None,
         tags: list[str] | None = None,
-        sources: list[dict[str, str]] | None = None,
+        sources: list[dict[str, str] | str] | None = None,
         links: list[dict[str, str]] | None = None,
     ) -> dict[str, Any]:
         """Create or update a knowledge atom.
@@ -181,7 +181,7 @@ class UpsertHandler:
         pitfalls: list[str] | None,
         language: str | None,
         tags: list[str] | None,
-        sources: list[dict[str, str]] | None,
+        sources: list[dict[str, str] | str] | None,
         links: list[dict[str, str]] | None,
         today: str,
     ) -> dict[str, Any]:
@@ -230,16 +230,27 @@ class UpsertHandler:
 
         return _atom_to_map(atom)
 
-    def _parse_sources(self, sources: list[dict[str, str]] | None) -> list[Source]:
-        """Parse source dicts into Source objects."""
+    def _parse_sources(
+        self, sources: list[dict[str, str] | str] | None
+    ) -> list[Source]:
+        """Parse source dicts or strings into Source objects.
+
+        Accepts either:
+        - dict with "kind" and "ref" keys: {"kind": "repo_path", "ref": "src/file.ts"}
+        - string: auto-converted to repo_path source
+        """
         if not sources:
             return []
         result = []
         for s in sources:
             try:
-                kind = SourceKind(s.get("kind", ""))
-                ref = s.get("ref", "")
-                result.append(Source(kind=kind, ref=ref))
+                if isinstance(s, str):
+                    # Auto-convert string to repo_path source
+                    result.append(Source(kind=SourceKind.REPO_PATH, ref=s))
+                else:
+                    kind = SourceKind(s.get("kind", ""))
+                    ref = s.get("ref", "")
+                    result.append(Source(kind=kind, ref=ref))
             except ValueError:
                 pass  # Skip invalid sources
         return result
