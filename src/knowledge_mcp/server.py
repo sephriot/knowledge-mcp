@@ -38,15 +38,22 @@ This investment pays off: future tasks in this project will be faster because yo
 - glossary: Domain-specific terms and definitions
 - snippet: Reusable code fragments
 
-## Search Behavior
-- Query accepts string or array: `query: "error handling"` or `query: ["error", "handling"]`
-- Strings are automatically tokenized by whitespace
-- Uses OR logic: any matching token scores points
-- More matches = higher score (cumulative)
-- Use include_content=true for thorough searches
-- Filter by type/tags/language to narrow results
-- Use file_path to find atoms related to a specific file (searches repo_path sources)
-  - Accepts string or array: `file_path: "src/foo.py"` or `file_path: ["src/a.py", "src/b.py"]`
+## Search Parameters & Behavior
+- **query** (string | list): Primary search terms.
+    - Logic: **OR** (matches ANY token).
+    - Scoring: Cumulative (more matches = higher score).
+    - Tokenization: Strings split by whitespace.
+- **include_content** (bool): Search in `summary` and `details`.
+    - Default: `false` (fast, title/tags only).
+    - Recommended: Set `true` for deep retrieval when title match is unsure.
+- **file_path** (string | list): Search by source code proximity.
+    - Finds atoms referencing specific files in their `sources`.
+    - Hierarchy: Exact match > Parent dir match.
+    - Use when working on specific files to find relevant context.
+- **Filters**:
+    - `types`: List of types (e.g., `["gotcha", "pattern"]`).
+    - `tags`: List of tags (e.g., `["auth"]`).
+    - `language`: specific language (e.g., "python").
 
 ## Best Practices
 1. Search BEFORE creating to avoid duplicates
