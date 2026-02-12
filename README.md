@@ -2,6 +2,8 @@
 
 An MCP server providing project-specific knowledge management for coding agents (Claude Code, Codex, Gemini). Uses **stdio transport** and **YAML-based storage** for optimal LLM efficiency.
 
+Better version of similar concept: [atlas-mcp](https://github.com/sephriot/atlas-mcp) 
+
 **Local-first design**: Each project has its own `.knowledge` directory that can be committed to git.
 
 > **Note**: There is another unrelated project with the same name on PyPI. This project is **not published to PyPI**. Install from GitHub only.
